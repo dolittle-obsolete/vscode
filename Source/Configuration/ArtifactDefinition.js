@@ -14,4 +14,11 @@ export class ArtifactDefinition {
         this.type = type;
         
     }
+
+    get name() {
+        return this.type.split(',')[0].split('.').pop();
+    }
+    get area() {
+        return this.type.split(',')[1].trim();
+    }
 }

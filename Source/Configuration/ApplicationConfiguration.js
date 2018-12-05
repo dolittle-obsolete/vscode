@@ -34,7 +34,7 @@ export async function loadApplicationConfiguration() {
             const uri = result[0];
             const filePath = uri.path;
 
-            console.log(filePath);
+            console.log(`Found application configuration at path: ${filePath}`);
             const jsonObj = readJsonFromUriSync(uri);
 
             const applicationId = jsonObj['id'];
@@ -42,6 +42,7 @@ export async function loadApplicationConfiguration() {
             if (applicationId === undefined || applicationName === undefined) {
                 vscode.window.showErrorMessage(`Found an invalid application configuration at path ${filePath}`)
             } else {
+                console.log(`Loaded application configuration with id '${applicationId}' and name '${applicationName}'`)
                 return new ApplicationConfiguration({id: applicationId, name: applicationName}, filePath);
             };
         }, error => {

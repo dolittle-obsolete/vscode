@@ -5,6 +5,7 @@
 import { Core } from "./Core";
 import { readJsonFromUriSync, getDirectoryPath, getArtifactFolderPath, getEventsFolderPaths } from "../helpers";
 import { getArtifactsFromCore } from "./Artifacts";
+import { getTopologyFromCore, Topology } from "./Topology";
 
 /**
  * Loads the bounded context configurations
@@ -27,7 +28,7 @@ export async function loadBoundedContextConfigurations() {
             let boundedContextConfigs = [];
             result.forEach( uri => {
                 const filePath = uri.path;
-                console.log(filePath);
+                console.log(`Found bounded context configuration at path ${filePath}`);
                 const jsonObj = readJsonFromUriSync(uri);
                 
                 const application = jsonObj['application'];
@@ -35,9 +36,12 @@ export async function loadBoundedContextConfigurations() {
                 const boundedContextName = jsonObj['boundedContextName'];
                 const core = jsonObj['core'];
                 const coreLanguage = core || core.language || undefined;
+                
                 if (application === undefined || boundedContext === undefined || boundedContextName === undefined || coreLanguage === undefined) {
                     vscode.window.showErrorMessage(`Found an invalid bounded context configuration at path ${filePath}`);
                 } else {
+
+                    console.log(`Loaded bounded context configuration with id '${boundedContext}' and name '${boundedContextName}'`)
                     boundedContextConfigs.push(new BoundedContextConfiguration(application, boundedContext, boundedContextName, new Core(coreLanguage), filePath));
                 }
             });
@@ -71,6 +75,14 @@ export class BoundedContextConfiguration {
         this._eventFolders = getEventsFolderPaths(this._rootPath, 'events');
         
         this._artifacts = getArtifactsFromCore(this.coreFolder);
+        this._topology = getTopologyFromCore(this.coreFolder);
+    }
+    /**
+     *
+     *
+     */
+    get artifacts() {
+        return this._artifacts;
     }
     /**
       * Gets the application GUID
@@ -119,6 +131,16 @@ export class BoundedContextConfiguration {
     get rootPath() {
         return this._rootPath;
     }
+    /**
+     *
+     *
+     * @readonly
+     * @memberof BoundedContextConfiguration
+     * @returns {Topology}
+     */
+    get topology() {
+        return this._topology;
+    }
 
     get domainFolder() {
         return this._domainFolder;
@@ -131,9 +153,5 @@ export class BoundedContextConfiguration {
     }
     get eventsFolders() {
         return this._eventFolders;
-    }
-
-    get artifacts() {
-        return this._artifacts;
     }
 }

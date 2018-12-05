@@ -1,14 +1,13 @@
 import { ProjectConfiguration } from '../Configuration/ProjectConfiguration';
 import { BoundedContextNode } from './BoundedContextNode';
 import { FeatureNode } from './FeatureNode';
+import { Feature } from '../Configuration/Feature';
 import { BoundedContextConfiguration } from '../Configuration/BoundedContextConfiguration';
 import { TreeItemCollapsibleState } from 'vscode';
-import { fileExistsSync, readJsonFromUriSync, readJsonFromFileSync } from '../helpers';
-
-
+import { ArtifactDefinitionsPerFeature } from '../Configuration/ArtifactDefinitionsPerFeature';
+import { ArtifactNode } from './ArtifactNode';
 
 const vscode = require('vscode');
-
 
 export class BoundedContextNodeProvider {
     /**
@@ -19,7 +18,6 @@ export class BoundedContextNodeProvider {
     constructor(config) {    
         this._onDidChangeTreeData = new vscode.EventEmitter();
         this._config = config;
-        
     }
     /**
      * 
@@ -53,10 +51,10 @@ export class BoundedContextNodeProvider {
         }
         if (element === undefined) {
             let boundedContextNodes = [];
+            console.log('Creating bounded context nodes')
             this._config.boundedContexts.forEach( boundedContext => {
                 boundedContextNodes.push(createBoundedContextNode(boundedContext));
             });
-
             return Promise.resolve(boundedContextNodes);
 
         } else {
@@ -85,12 +83,37 @@ function createBoundedContextNode(boundedContext) {
  * @returns {FeatureNode[]}
  */
 function findAllFeatures(boundedContext) {
-    const path = require('path');
     let artifacts = boundedContext.artifacts;
+    let featureNodes = [];
     artifacts.artifacts.forEach(artifactsPerFeature => {
-        
-    })
-
-    
-
+        let feature = boundedContext.topology.findFeature(artifactsPerFeature.featureId);
+        if (feature === null) {
+            const errMsg = `Found feature with id: '${artifactsPerFeature.featureId}' that doesn't exist in the topology`;
+            console.error(errMsg);
+            vscode.window.showErrorMessage(errMsg);
+        } else {
+            let featureNode = new FeatureNode(feature.name, TreeItemCollapsibleState.Collapsed, feature);
+            buildArtifactNodes(artifactsPerFeature).forEach(artifact => {
+                featureNode.addArtifact(artifact);
+            });
+            featureNodes.push(feature);
+        }
+    });
+    return featureNodes;
+}
+/**
+ *
+ *
+ * @param {ArtifactDefinitionsPerFeature} artifactsPerFeature
+ * @returns {ArtifactNode[]}
+ */
+function buildArtifactNodes(artifactsPerFeature) {
+    let artifacts = new Array (
+        ...artifactsPerFeature.commands.map(artifact => new ArtifactNode(artifact.name, 'command', artifact.area, artifact.artifact)),
+        ...artifactsPerFeature.eventSources.map(artifact => new ArtifactNode(artifact.name, 'eventSource', artifact.area, artifact.artifact)),
+        ...artifactsPerFeature.events.map(artifact => new ArtifactNode(artifact.name, 'event', artifact.area, artifact.artifact)),
+        ...artifactsPerFeature.queries.map(artifact => new ArtifactNode(artifact.name, 'query', artifact.area, artifact.artifact)),
+        ...artifactsPerFeature.readModels.map(artifact => new ArtifactNode(artifact.name, 'readModel', artifact.area, artifact.artifact)),
+    );
+    return artifacts;
 }

@@ -2,9 +2,6 @@
 import {TreeItem, TreeItemCollapsibleState} from 'vscode';
 import { FeatureNode } from './FeatureNode';
 
-
-const _features = new WeakMap();
-
 export class BoundedContextNode extends TreeItem {
 
     /**
@@ -16,8 +13,8 @@ export class BoundedContextNode extends TreeItem {
      */
     constructor (label, collapsibleState, id) {
         super(label, collapsibleState);
-        _features.set(this, []);
-        super.tooltip = id;
+        this._features = [];
+        super.tooltip = `id: '${id}'`;
     }
     /**
      * Gets the features of this bounded context
@@ -27,7 +24,7 @@ export class BoundedContextNode extends TreeItem {
      * @returns {FeatureNode[]}
      */
     get features() {
-        return _features.get(this);
+        return this._features;
     }
     /**
      * Adds a feature to the bounded context
@@ -36,7 +33,7 @@ export class BoundedContextNode extends TreeItem {
      * @memberof BoundedContextNode
      */
     addFeature(feature) {
-        _features.get(this).push(feature);
+        this._features.push(feature);
     }
     
 }
