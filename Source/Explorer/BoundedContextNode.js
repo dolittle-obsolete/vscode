@@ -23,7 +23,7 @@ export class BoundedContextNode extends TreeItem {
      * @memberof BoundedContextNode
      * @returns {FeatureNode[]}
      */
-    get features() {
+    get children() {
         return this._features;
     }
     /**

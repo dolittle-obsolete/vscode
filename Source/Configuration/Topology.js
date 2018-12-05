@@ -24,8 +24,6 @@ export class Topology {
     constructor (topology) {
         this.modules = topology.modules.map(module => new ModuleDefinition(module.module, module.name, module.features));
         this.features = topology.features.map(feature => new Feature(feature.feature, feature.name, feature.subFeatures));
-        console.log(this.modules);
-        console.log(this.features);
     }
 
     hasModules() {

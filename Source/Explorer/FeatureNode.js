@@ -17,8 +17,8 @@ export class FeatureNode extends TreeItem {
         feature.subFeatures.forEach(subFeature => this.addSubFeature(new FeatureNode(subFeature.name, TreeItemCollapsibleState.Collapsed, subFeature)));
         super.tooltip = `Feature id: '${feature.feature}'`;
     }
-    get features() {
-        return this._features;
+    get children() {
+        return this._artifacts.concat(this._features);
     }
     /**
      * 

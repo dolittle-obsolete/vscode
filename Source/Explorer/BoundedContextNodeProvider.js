@@ -40,7 +40,7 @@ export class BoundedContextNodeProvider {
     /**
      *
      *
-     * @param {BoundedContextNode} element
+     * @param {BoundedContextNode | FeatureNode} element
      * @memberof BoundedContextNodeProvider
      * @returns {Promise<FeatureNode[] | BoundedContextNode[]>}
      */
@@ -51,14 +51,13 @@ export class BoundedContextNodeProvider {
         }
         if (element === undefined) {
             let boundedContextNodes = [];
-            console.log('Creating bounded context nodes')
             this._config.boundedContexts.forEach( boundedContext => {
                 boundedContextNodes.push(createBoundedContextNode(boundedContext));
             });
             return Promise.resolve(boundedContextNodes);
 
         } else {
-            return Promise.resolve(element.features);
+            return Promise.resolve(element.children);
         }
     }
     
@@ -96,7 +95,7 @@ function findAllFeatures(boundedContext) {
             buildArtifactNodes(artifactsPerFeature).forEach(artifact => {
                 featureNode.addArtifact(artifact);
             });
-            featureNodes.push(feature);
+            featureNodes.push(featureNode);
         }
     });
     return featureNodes;
@@ -109,11 +108,11 @@ function findAllFeatures(boundedContext) {
  */
 function buildArtifactNodes(artifactsPerFeature) {
     let artifacts = new Array (
-        ...artifactsPerFeature.commands.map(artifact => new ArtifactNode(artifact.name, 'command', artifact.area, artifact.artifact)),
-        ...artifactsPerFeature.eventSources.map(artifact => new ArtifactNode(artifact.name, 'eventSource', artifact.area, artifact.artifact)),
-        ...artifactsPerFeature.events.map(artifact => new ArtifactNode(artifact.name, 'event', artifact.area, artifact.artifact)),
-        ...artifactsPerFeature.queries.map(artifact => new ArtifactNode(artifact.name, 'query', artifact.area, artifact.artifact)),
-        ...artifactsPerFeature.readModels.map(artifact => new ArtifactNode(artifact.name, 'readModel', artifact.area, artifact.artifact)),
+        ...artifactsPerFeature.commands.map(artifact => new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, artifact.artifact)),
+        ...artifactsPerFeature.eventSources.map(artifact => new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, artifact.artifact)),
+        ...artifactsPerFeature.events.map(artifact => new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, artifact.artifact)),
+        ...artifactsPerFeature.queries.map(artifact => new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, artifact.artifact)),
+        ...artifactsPerFeature.readModels.map(artifact => new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, artifact.artifact)),
     );
     return artifacts;
 }
