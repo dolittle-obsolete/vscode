@@ -1,8 +1,8 @@
 {
-    "name": "@dolittle/vs-code-feature-explorer",
-    "displayName": "Dolittle Feature Explorer",
-    "description": "Explorer window of features",
-    "version": "2.0.0-alpha2.1",
+    "name": "@dolittle/vscode",
+    "displayName": "Dolittle",
+    "description": "Tools and extensions that enables you to become a Dolittle superhero!",
+    "version": "0.0.1",
     "author": "Dolittle",
     "publisher": "woksin",
 
@@ -16,10 +16,7 @@
         "Other"
     ],
     "activationEvents": [
-        "workspaceContains:**/application.json",
-        "onCommand:extension.startDolittleFeatureExplorer",
-        
-        "onView:boundedContextExplorer"
+        "workspaceContains:**/application.json"
     ],
     "main": "bin/extension.js",
     "module": "bin/extension.js",
@@ -28,23 +25,7 @@
     ],
     "contributes": {
         "commands": [
-            {
-                "command": "extension.startDolittleFeatureExplorer",
-                "title": "Dolittle Feature Explorer: Start"
-            },
-            {
-                "command": "extension.reloadConfiguration",
-                "title": "Dolittle Feature Explorer: Reload Configurations"
-            }
-        ],
-        "views": {
-            "explorer": [
-                {
-                    "id": "boundedContextExplorer",
-				    "name": "Bounded Context Explorer"
-                }
-            ]
-        }
+        ]
     },
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install",
@@ -56,7 +37,6 @@
         "@types/node": "^8.10.25",
         "eslint": "^5.9.0",
         "vscode": "^1.1.21",
-
         "babel-cli": "^6.26.0",
         "babel-plugin-transform-async-generator-functions": "^6.24.1",
         "babel-plugin-transform-async-to-generator": "^6.24.1",
@@ -70,9 +50,8 @@
 
     },
     "dependencies": {
-        "babel-runtime": "^6.26.0",
         "@dolittle/cli": "^2.0.0-alpha2.40",
-
+        "babel-runtime": "^6.26.0",
         "fs-extra": "^7.0.0",
         "shelljs": "^0.8.2"
     }
