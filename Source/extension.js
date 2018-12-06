@@ -38,9 +38,8 @@ function activate(context) {
  * @param {import('./Configuration/ProjectConfiguration').ProjectConfiguration} projectConfiguration
  */
 function buildContext(context, projectConfiguration) {
-    // vscode.window.registerTreeDataProvider('boundedContextExplorer', new BoundedContextNodeProvider(projectConfiguration));
-    vscode.window.createTreeView('boundedContextExplorer', {treeDataProvider: new BoundedContextNodeProvider(projectConfiguration)});
-    vscode.window.showInformationMessage('Loaded Dolittle project configuration');
+    //vscode.window.createTreeView('boundedContextExplorer', {treeDataProvider: new BoundedContextNodeProvider(projectConfiguration)});
+    //vscode.window.showInformationMessage('Loaded Dolittle project configuration');
     
 }
 const _activate = activate;
