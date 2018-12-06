@@ -16,7 +16,8 @@
         "Other"
     ],
     "activationEvents": [
-        "workspaceContains:**/application.json"
+        "workspaceContains:**/application.json",
+        "onCommand:dolittle.newDolittleProject"
     ],
     "main": "bin/extension.js",
     "module": "bin/extension.js",
@@ -25,6 +26,21 @@
     ],
     "contributes": {
         "commands": [
+            {
+                "command": "dolittle.build",
+                "category": "Dolittle Project",
+                "title": "Build"
+            },
+            {
+                "command": "dolittle.newDolittleProject",
+                "category": "Dolittle Project",
+                "title": "New Dolittle Project"
+            },
+            {
+                "command": "dolittle.createBoundedContext",
+                "category": "Dolittle Project",
+                "title": "Create Bounded Context"
+            }
         ]
     },
     "scripts": {

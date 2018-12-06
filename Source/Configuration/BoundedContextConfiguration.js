@@ -27,6 +27,7 @@ export async function loadBoundedContextConfigurations() {
             }
             let boundedContextConfigs = [];
             result.forEach( uri => {
+                
                 const filePath = uri.path;
                 console.log(`Found bounded context configuration at path ${filePath}`);
                 const jsonObj = readJsonFromUriSync(uri);

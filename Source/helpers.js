@@ -6,8 +6,6 @@ import { Uri } from "vscode";
 const fs = require('fs-extra');
 const path = require('path');
 
-
-
  /**
   * Reads json object from file given by uri
   *

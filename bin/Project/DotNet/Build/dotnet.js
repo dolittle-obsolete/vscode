@@ -1,0 +1,56 @@
+#!/usr/local/bin/node
+'use strict';
+
+var resolveProject = require('./resolveProject');
+var spawn = require('child_process').spawn;
+
+// Args:
+// /root:RootDir / Place to put output files
+// /t:Type of project running (free-text)
+// /r - rerun
+// /specsFor
+
+var rerun = false;
+var type = "default";
+var rootDir = "";
+var forTests = false;
+var ignoreRewriteFolder = false;
+var dotnetArguments = [];
+
+process.argv.forEach(function (item, index) {
+    if (index == 0) return;
+
+    if (item.indexOf("/root:") == 0) {
+        rootDir = item.substr(6);
+    }
+    if (item.indexOf("/type:") == 0) {
+        type = item.substr(6);
+    }
+    if (item.indexOf("/rerun") == 0) {
+        rerun = true;
+    }
+    if (item.indexOf("/ignoreRewriteFolder") == 0) {
+        ignoreRewriteFolder = true;
+    }
+    if (item.indexOf("/forTests") == 0) {
+        forTests = true;
+    }
+    if (item.indexOf("/arguments:") == 0) {
+        var args = item.substr("/arguments:".length);
+        if (args.indexOf("(") == 0) args = args.substr(1, args.length - 2);
+        dotnetArguments = args.split(" ");
+    }
+});
+
+if (rootDir.length == 0) {
+    console.log("Missing rootDir - use /root:<root dir> - the rootdir is where any output files are stored");
+    process.exit(1);
+}
+
+var project = resolveProject(rootDir, type, ignoreRewriteFolder, rerun, forTests);
+console.log("Project context: " + project);
+console.log("Arguments for dotnet : " + dotnetArguments);
+dotnetArguments.push(project);
+
+spawn("dotnet", dotnetArguments, { stdio: "inherit", stderr: "inherit" });
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uL1NvdXJjZS9Qcm9qZWN0L0RvdE5ldC9CdWlsZC9kb3RuZXQuanMiXSwibmFtZXMiOlsicmVzb2x2ZVByb2plY3QiLCJyZXF1aXJlIiwic3Bhd24iLCJyZXJ1biIsInR5cGUiLCJyb290RGlyIiwiZm9yVGVzdHMiLCJpZ25vcmVSZXdyaXRlRm9sZGVyIiwiZG90bmV0QXJndW1lbnRzIiwicHJvY2VzcyIsImFyZ3YiLCJmb3JFYWNoIiwiaXRlbSIsImluZGV4IiwiaW5kZXhPZiIsInN1YnN0ciIsImFyZ3MiLCJsZW5ndGgiLCJzcGxpdCIsImNvbnNvbGUiLCJsb2ciLCJleGl0IiwicHJvamVjdCIsInB1c2giLCJzdGRpbyIsInN0ZGVyciJdLCJtYXBwaW5ncyI6Ijs7QUFFQSxJQUFNQSxpQkFBaUJDLFFBQVEsa0JBQVIsQ0FBdkI7QUFDQSxJQUFNQyxRQUFRRCxRQUFRLGVBQVIsRUFBeUJDLEtBQXZDOztBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7O0FBRUEsSUFBSUMsUUFBUSxLQUFaO0FBQ0EsSUFBSUMsT0FBTyxTQUFYO0FBQ0EsSUFBSUMsVUFBVSxFQUFkO0FBQ0EsSUFBSUMsV0FBVyxLQUFmO0FBQ0EsSUFBSUMsc0JBQXNCLEtBQTFCO0FBQ0EsSUFBSUMsa0JBQWtCLEVBQXRCOztBQUVBQyxRQUFRQyxJQUFSLENBQWFDLE9BQWIsQ0FBcUIsVUFBQ0MsSUFBRCxFQUFPQyxLQUFQLEVBQWlCO0FBQ2xDLFFBQUlBLFNBQVMsQ0FBYixFQUFnQjs7QUFFaEIsUUFBSUQsS0FBS0UsT0FBTCxDQUFhLFFBQWIsS0FBMEIsQ0FBOUIsRUFBaUM7QUFDN0JULGtCQUFVTyxLQUFLRyxNQUFMLENBQVksQ0FBWixDQUFWO0FBQ0g7QUFDRCxRQUFJSCxLQUFLRSxPQUFMLENBQWEsUUFBYixLQUEwQixDQUE5QixFQUFpQztBQUM3QlYsZUFBT1EsS0FBS0csTUFBTCxDQUFZLENBQVosQ0FBUDtBQUNIO0FBQ0QsUUFBSUgsS0FBS0UsT0FBTCxDQUFhLFFBQWIsS0FBMEIsQ0FBOUIsRUFBaUM7QUFDN0JYLGdCQUFRLElBQVI7QUFDSDtBQUNELFFBQUlTLEtBQUtFLE9BQUwsQ0FBYSxzQkFBYixLQUF3QyxDQUE1QyxFQUErQztBQUMzQ1AsOEJBQXNCLElBQXRCO0FBQ0g7QUFDRCxRQUFJSyxLQUFLRSxPQUFMLENBQWEsV0FBYixLQUE2QixDQUFqQyxFQUFvQztBQUNoQ1IsbUJBQVcsSUFBWDtBQUNIO0FBQ0QsUUFBSU0sS0FBS0UsT0FBTCxDQUFhLGFBQWIsS0FBK0IsQ0FBbkMsRUFBc0M7QUFDbEMsWUFBSUUsT0FBT0osS0FBS0csTUFBTCxDQUFZLGNBQWNFLE1BQTFCLENBQVg7QUFDQSxZQUFJRCxLQUFLRixPQUFMLENBQWEsR0FBYixLQUFxQixDQUF6QixFQUE2QkUsT0FBT0EsS0FBS0QsTUFBTCxDQUFZLENBQVosRUFBZUMsS0FBS0MsTUFBTCxHQUFjLENBQTdCLENBQVA7QUFDN0JULDBCQUFrQlEsS0FBS0UsS0FBTCxDQUFXLEdBQVgsQ0FBbEI7QUFDSDtBQUNKLENBdkJEOztBQXlCQSxJQUFJYixRQUFRWSxNQUFSLElBQWtCLENBQXRCLEVBQXlCO0FBQ3JCRSxZQUFRQyxHQUFSLENBQVksMkZBQVo7QUFDQVgsWUFBUVksSUFBUixDQUFhLENBQWI7QUFDSDs7QUFFRCxJQUFJQyxVQUFVdEIsZUFBZUssT0FBZixFQUF3QkQsSUFBeEIsRUFBOEJHLG1CQUE5QixFQUFtREosS0FBbkQsRUFBMERHLFFBQTFELENBQWQ7QUFDQWEsUUFBUUMsR0FBUixDQUFZLHNCQUFzQkUsT0FBbEM7QUFDQUgsUUFBUUMsR0FBUixDQUFZLDRCQUEwQlosZUFBdEM7QUFDQUEsZ0JBQWdCZSxJQUFoQixDQUFxQkQsT0FBckI7O0FBRUFwQixNQUFNLFFBQU4sRUFBZ0JNLGVBQWhCLEVBQWlDLEVBQUVnQixPQUFPLFNBQVQsRUFBb0JDLFFBQVEsU0FBNUIsRUFBakMiLCJmaWxlIjoiZG90bmV0LmpzIiwic291cmNlc0NvbnRlbnQiOlsiXG5cbmNvbnN0IHJlc29sdmVQcm9qZWN0ID0gcmVxdWlyZSgnLi9yZXNvbHZlUHJvamVjdCcpO1xuY29uc3Qgc3Bhd24gPSByZXF1aXJlKCdjaGlsZF9wcm9jZXNzJykuc3Bhd25cblxuLy8gQXJnczpcbi8vIC9yb290OlJvb3REaXIgLyBQbGFjZSB0byBwdXQgb3V0cHV0IGZpbGVzXG4vLyAvdDpUeXBlIG9mIHByb2plY3QgcnVubmluZyAoZnJlZS10ZXh0KVxuLy8gL3IgLSByZXJ1blxuLy8gL3NwZWNzRm9yXG5cbmxldCByZXJ1biA9IGZhbHNlO1xubGV0IHR5cGUgPSBcImRlZmF1bHRcIjtcbmxldCByb290RGlyID0gXCJcIjtcbmxldCBmb3JUZXN0cyA9IGZhbHNlO1xubGV0IGlnbm9yZVJld3JpdGVGb2xkZXIgPSBmYWxzZTtcbmxldCBkb3RuZXRBcmd1bWVudHMgPSBbXTtcblxucHJvY2Vzcy5hcmd2LmZvckVhY2goKGl0ZW0sIGluZGV4KSA9PiB7XG4gICAgaWYgKGluZGV4ID09IDApIHJldHVybjtcblxuICAgIGlmIChpdGVtLmluZGV4T2YoXCIvcm9vdDpcIikgPT0gMCkge1xuICAgICAgICByb290RGlyID0gaXRlbS5zdWJzdHIoNik7XG4gICAgfVxuICAgIGlmIChpdGVtLmluZGV4T2YoXCIvdHlwZTpcIikgPT0gMCkge1xuICAgICAgICB0eXBlID0gaXRlbS5zdWJzdHIoNik7XG4gICAgfVxuICAgIGlmIChpdGVtLmluZGV4T2YoXCIvcmVydW5cIikgPT0gMCkge1xuICAgICAgICByZXJ1biA9IHRydWU7XG4gICAgfVxuICAgIGlmIChpdGVtLmluZGV4T2YoXCIvaWdub3JlUmV3cml0ZUZvbGRlclwiKSA9PSAwKSB7XG4gICAgICAgIGlnbm9yZVJld3JpdGVGb2xkZXIgPSB0cnVlO1xuICAgIH1cbiAgICBpZiAoaXRlbS5pbmRleE9mKFwiL2ZvclRlc3RzXCIpID09IDApIHtcbiAgICAgICAgZm9yVGVzdHMgPSB0cnVlO1xuICAgIH1cbiAgICBpZiAoaXRlbS5pbmRleE9mKFwiL2FyZ3VtZW50czpcIikgPT0gMCkge1xuICAgICAgICBsZXQgYXJncyA9IGl0ZW0uc3Vic3RyKFwiL2FyZ3VtZW50czpcIi5sZW5ndGgpO1xuICAgICAgICBpZiggYXJncy5pbmRleE9mKFwiKFwiKSA9PSAwICkgYXJncyA9IGFyZ3Muc3Vic3RyKDEsIGFyZ3MubGVuZ3RoIC0gMik7XG4gICAgICAgIGRvdG5ldEFyZ3VtZW50cyA9IGFyZ3Muc3BsaXQoXCIgXCIpO1xuICAgIH1cbn0pO1xuXG5pZiAocm9vdERpci5sZW5ndGggPT0gMCkge1xuICAgIGNvbnNvbGUubG9nKFwiTWlzc2luZyByb290RGlyIC0gdXNlIC9yb290Ojxyb290IGRpcj4gLSB0aGUgcm9vdGRpciBpcyB3aGVyZSBhbnkgb3V0cHV0IGZpbGVzIGFyZSBzdG9yZWRcIik7XG4gICAgcHJvY2Vzcy5leGl0KDEpO1xufVxuXG5sZXQgcHJvamVjdCA9IHJlc29sdmVQcm9qZWN0KHJvb3REaXIsIHR5cGUsIGlnbm9yZVJld3JpdGVGb2xkZXIsIHJlcnVuLCBmb3JUZXN0cyk7XG5jb25zb2xlLmxvZyhcIlByb2plY3QgY29udGV4dDogXCIgKyBwcm9qZWN0KTtcbmNvbnNvbGUubG9nKFwiQXJndW1lbnRzIGZvciBkb3RuZXQgOiBcIitkb3RuZXRBcmd1bWVudHMpO1xuZG90bmV0QXJndW1lbnRzLnB1c2gocHJvamVjdCk7XG5cbnNwYXduKFwiZG90bmV0XCIsIGRvdG5ldEFyZ3VtZW50cywgeyBzdGRpbzogXCJpbmhlcml0XCIsIHN0ZGVycjogXCJpbmhlcml0XCIgfSk7XG4iXX0=
