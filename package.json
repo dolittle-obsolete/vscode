@@ -40,6 +40,11 @@
                 "command": "dolittle.createBoundedContext",
                 "category": "Dolittle Project",
                 "title": "Create Bounded Context"
+            },
+            {
+                "command": "dolittle.createApplication",
+                "category": "Dolittle Project",
+                "title": "Create Application"
             }
         ]
     },
