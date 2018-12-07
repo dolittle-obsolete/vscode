@@ -1,6 +1,7 @@
 import { Uri } from 'vscode';
 
 const vscode = require('vscode');
+const path = require('path');
 /**
  *
  *
@@ -10,19 +11,25 @@ const vscode = require('vscode');
  * @param {Uri} documentUri
  */
 export function build(language, workspaceUri, documentUri) {
+    const fileDir = path.dirname(documentUri.fsPath);
+    const root = workspaceUri.fsPath;
+
     switch(language) {
         case 'csharp':
-            const path = require('path');
-            const spawn = require('child_process');
-            let root = workspaceUri.fsPath;
-            let fileDirName = path.dirname(documentUri.fsPath);
-            console.log(workspaceUri);
-            console.log(documentUri);
-            console.log(root);
-            console.log(fileDirName);
-            // spawn('node', ['DotNet/Build/dotnet.js', 'root:'])
-            
+            const dotnet = require('./DotNet/dotnetProject');
+            vscode.window.showInformationMessage('Building dotnet application');
+            let childProcess = dotnet.build(root, fileDir);
+            childProcess.on('close', code => {
+                if (code !== 0) {
+                    vscode.window.showErrorMessage('Error while building dotnet application');
+                    throw 'error while building dotnet application';
+                }
+                
+                vscode.window.showInformationMessage('Finished building dotnet application');
+            })
+            break;
         default:
             vscode.window.showErrorMessage(`Dolittle Project: Build does not support language '${language}'`)
+            break;
     }
 }

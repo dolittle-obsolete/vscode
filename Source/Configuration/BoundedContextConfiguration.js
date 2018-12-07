@@ -27,7 +27,7 @@ export async function loadBoundedContextConfigurations() {
             }
             let boundedContextConfigs = [];
             result.forEach( uri => {
-                
+                let workspace = vscode.workspace.getWorkspaceFolder(uri);
                 const filePath = uri.path;
                 console.log(`Found bounded context configuration at path ${filePath}`);
                 const jsonObj = readJsonFromUriSync(uri);
@@ -43,7 +43,7 @@ export async function loadBoundedContextConfigurations() {
                 } else {
 
                     console.log(`Loaded bounded context configuration with id '${boundedContext}' and name '${boundedContextName}'`)
-                    boundedContextConfigs.push(new BoundedContextConfiguration(application, boundedContext, boundedContextName, new Core(coreLanguage), filePath));
+                    boundedContextConfigs.push(new BoundedContextConfiguration(application, boundedContext, boundedContextName, new Core(coreLanguage), filePath, workspace));
                 }
             });
 
@@ -60,14 +60,16 @@ export class BoundedContextConfiguration {
       * @param {string} boundedContext 
       * @param {string} boundedContextName 
       * @param {Core} core 
-      * @param {string} path 
+      * @param {string} path
+      * @param {{index: number, name: string, uri: import('vscode').Uri}} workspace 
       */
-     constructor (application, boundedContext, boundedContextName, core, path) {
+     constructor (application, boundedContext, boundedContextName, core, path, workspace) {
         this._application = application;
         this._boundedContext = boundedContext;
         this._boundedContextName = boundedContextName;
         this._core = core;
         this._path = path;
+        this._workspace = workspace;
 
         this._rootPath = getDirectoryPath(path);
         this._domainFolder = getArtifactFolderPath(this._rootPath, 'domain')[0] || undefined;
@@ -121,6 +123,9 @@ export class BoundedContextConfiguration {
      */
     get path() {
         return this._path;
+    }
+    get workspace() {
+        return this._workspace;
     }
     /**
      * Gets the path of the root folder of the bounded context
