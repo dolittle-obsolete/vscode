@@ -5,6 +5,7 @@
 
 import { BoundedContextConfiguration, loadBoundedContextConfigurations } from "./BoundedContextConfiguration";
 import { loadApplicationConfiguration, ApplicationConfiguration } from "./ApplicationConfiguration";
+import globals from "../globals";
  
 /**
  * Loads the project configuration
@@ -17,10 +18,7 @@ export async function loadProjectConfiguration() {
     return Promise.all([loadApplicationConfiguration(), loadBoundedContextConfigurations()])
         .then( values => new ProjectConfiguration(values[0], values[1]))
         .catch( err => {
-            console.error('Could not load project configuration: ', err);
-            vscode.window.showErrorMessage('Could not load the project configuration');
-
-            throw err;
+            throw err
         });
 }
 

@@ -6,6 +6,7 @@ import { BoundedContextConfiguration } from '../Configuration/BoundedContextConf
 import { TreeItemCollapsibleState } from 'vscode';
 import { ArtifactDefinitionsPerFeature } from '../Configuration/ArtifactDefinitionsPerFeature';
 import { ArtifactNode } from './ArtifactNode';
+import globals from '../globals';
 
 const vscode = require('vscode');
 
@@ -88,8 +89,7 @@ function findAllFeatures(boundedContext) {
         let feature = boundedContext.topology.findFeature(artifactsPerFeature.featureId);
         if (feature === null) {
             const errMsg = `Found feature with id: '${artifactsPerFeature.featureId}' that doesn't exist in the topology`;
-            console.error(errMsg);
-            vscode.window.showErrorMessage(errMsg);
+            globals.dolittleProjectOutputChannel.appendLine(errMsg);
         } else {
             let featureNode = new FeatureNode(feature.name, TreeItemCollapsibleState.Collapsed, feature);
             buildArtifactNodes(artifactsPerFeature).forEach(artifact => {

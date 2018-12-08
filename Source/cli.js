@@ -1,5 +1,6 @@
+import globals from './globals';
+
 const spawn = require('child_process').spawn;
-const vscode = require('vscode');
 const dolittleExePath = require.resolve('@dolittle/cli');
 /**
  *
@@ -13,16 +14,15 @@ const dolittleExePath = require.resolve('@dolittle/cli');
 export function spawnDolittleCliCommand(command, commandArgs, options) {
     const extNameLen = require('path').extname(dolittleExePath).length;
     let execPath = dolittleExePath.slice(0, -extNameLen) + '-'+ command.join('-') + '.js';
-    console.log([execPath, ...commandArgs]);
     let dolittle = spawn('node', [execPath, ...commandArgs], options);
     
+    globals.dolittleCliOutputChannel.appendLine(['$ dolittle', ...command, ...commandArgs].join(' '));
     dolittle.stdout.on('data', (data) => {
-        console.log(data.toString());
+        globals.dolittleCliOutputChannel.appendLine(data.toString());
     });
 
     dolittle.stderr.on('data', (data) => {
-        console.log(data.toString());
-        vscode.window.showErrorMessage(data.toString());
+        globals.dolittleCliOutputChannel.appendLine(`Error: ${data.toString()}`);
     });
 
     return dolittle;

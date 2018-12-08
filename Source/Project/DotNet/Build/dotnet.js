@@ -42,13 +42,10 @@ process.argv.forEach((item, index) => {
 });
 
 if (rootDir.length == 0) {
-    console.log("Missing rootDir - use /root:<root dir> - the rootdir is where any output files are stored");
     process.exit(1);
 }
 
 let project = resolveProject(rootDir, type, ignoreRewriteFolder, rerun, forTests);
-console.log("Project context: " + project);
-console.log("Arguments for dotnet : "+dotnetArguments);
 dotnetArguments.push(project);
 
 spawn("dotnet", dotnetArguments, { stdio: "inherit", stderr: "inherit" });

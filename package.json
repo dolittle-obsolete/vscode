@@ -16,8 +16,7 @@
         "Other"
     ],
     "activationEvents": [
-        "workspaceContains:**/application.json",
-        "onCommand:dolittle.newDolittleProject"
+        "*"
     ],
     "main": "bin/extension.js",
     "module": "bin/extension.js",
@@ -25,11 +24,57 @@
       "bin"
     ],
     "contributes": {
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "dolittle",
+                    "title": "Dolittle",
+                    "icon": "Resources/dolittle_symbol.svg"
+                }
+            ]
+        },
+        "views": {
+            "dolittle": [
+                {
+                    "id": "cluster",
+                    "name": "Cluster"
+                },
+                {
+                    "id": "eventStore",
+                    "name": "Event Store"
+                }
+            ]
+        },
         "commands": [
             {
                 "command": "dolittle.build",
                 "category": "Dolittle Project",
                 "title": "Build"
+            },
+            {
+                "command": "dolittle.buildCurrent",
+                "category": "Dolittle Project",
+                "title": "Build Current"
+            },
+            {
+                "command": "dolittle.restore",
+                "category": "Dolittle Project",
+                "title": "Restore"
+            },
+            {
+                "command": "dolittle.test",
+                "category": "Dolittle Project",
+                "title": "Test"
+            },
+            {
+                "command": "dolittle.testDebug",
+                "category": "Dolittle Project",
+                "title": "Test Debug"
+            },
+            {
+                "command": "dolittle.testRerun",
+                "category": "Dolittle Project",
+                "title": "Test Rerun"
             },
             {
                 "command": "dolittle.newDolittleProject",
