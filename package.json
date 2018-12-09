@@ -126,7 +126,7 @@
 
     },
     "dependencies": {
-        "@dolittle/cli": "^2.0.0-alpha2.40",
+        "@dolittle/cli": "^2.0.0-alpha2.59",
         "babel-runtime": "^6.26.0",
         "fs-extra": "^7.0.0",
         "shelljs": "^0.8.2"
