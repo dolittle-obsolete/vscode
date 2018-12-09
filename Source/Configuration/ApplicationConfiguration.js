@@ -1,6 +1,7 @@
 import { readJsonFromUriSync, getDirectoryPath } from '../helpers';
 import globals from '../globals';
 
+const vscode = require('vscode');
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Dolittle. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
@@ -12,40 +13,31 @@ import globals from '../globals';
  * @export
  */
 export async function loadApplicationConfiguration() {
-    const vscode = require('vscode');
-
     globals.dolittleProjectOutputChannel.appendLine('Loading application configuration');
-    vscode.window.showInformationMessage('Loading application configuration');
+    
+    let uris = await vscode.workspace.findFiles('**/application.json', '**/node_modules/**', 2);
+    if (!uris || uris.length == 0) {
+        globals.dolittleProjectOutputChannel.appendLine('Couldn\'t find any \'application.json\' file in the current workspace');
+        throw 'Couldn\'t find any \'application.json\' file in the current workspace';
+    }
+    if (uris.length > 1) {
+        globals.dolittleProjectOutputChannel.appendLine('Found more than one \'application.json\' file in the current workspace');
+        throw 'Found more than one \'application.json\' file in the current workspace';
+    }
+    
+    const applicationUri = uris[0];
+    const filePath = applicationUri.path;
 
-    return vscode.workspace.findFiles('**/application.json', '**/node_modules/**', 2)
-        .then(result => {
-            if (!result || result.length == 0) {
-                globals.dolittleProjectOutputChannel.appendLine('Couldn\'t find any \'application.json\' file in the current workspace');
+    const jsonObj = readJsonFromUriSync(applicationUri);
 
-                throw 'Couldn\'t find any \'application.json\' file in the current workspace';
-            }
-            if (result.length > 1) {
-                globals.dolittleProjectOutputChannel.appendLine('Found more than one \'application.json\' file in the current workspace');
-
-                throw 'Found more than one \'application.json\' file in the current workspace';
-            }
-            
-            const uri = result[0];
-            const filePath = uri.path;
-
-            const jsonObj = readJsonFromUriSync(uri);
-
-            const applicationId = jsonObj['id'];
-            const applicationName = jsonObj['name'];
-            if (applicationId === undefined || applicationName === undefined) {
-                globals.dolittleProjectOutputChannel.appendLine(`Found an invalid application configuration at path ${filePath}`);
-            } else {
-                globals.dolittleProjectOutputChannel.appendLine(`Loaded application configuration with id '${applicationId}' and name '${applicationName}'`);
-                return new ApplicationConfiguration({id: applicationId, name: applicationName}, filePath);
-            };
-        }, error => {
-            throw error;
-        });
+    const applicationId = jsonObj['id'];
+    const applicationName = jsonObj['name'];
+    if (applicationId === undefined || applicationName === undefined) {
+        globals.dolittleProjectOutputChannel.appendLine(`Found an invalid application configuration at path ${filePath}`);
+    } else {
+        globals.dolittleProjectOutputChannel.appendLine(`Loaded application configuration with id '${applicationId}' and name '${applicationName}'`);
+        return new ApplicationConfiguration({id: applicationId, name: applicationName}, filePath);
+    }
 
 }
 export class ApplicationConfiguration {

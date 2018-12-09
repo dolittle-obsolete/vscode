@@ -5,21 +5,17 @@
 
 import { BoundedContextConfiguration, loadBoundedContextConfigurations } from "./BoundedContextConfiguration";
 import { loadApplicationConfiguration, ApplicationConfiguration } from "./ApplicationConfiguration";
-import globals from "../globals";
- 
+
 /**
  * Loads the project configuration
  * @export
  * @returns {Promise<ProjectConfiguration>}
  */
 export async function loadProjectConfiguration() {
-    const vscode = require('vscode');
+    let application = await loadApplicationConfiguration();
+    let boundedContexts = await loadBoundedContextConfigurations();
+    return new ProjectConfiguration(application, boundedContexts);
     
-    return Promise.all([loadApplicationConfiguration(), loadBoundedContextConfigurations()])
-        .then( values => new ProjectConfiguration(values[0], values[1]))
-        .catch( err => {
-            throw err
-        });
 }
 
 const _application = new WeakMap();

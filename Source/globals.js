@@ -86,14 +86,10 @@ class globals {
      * @memberof globals
      */
     async setProjectConfiguration() {
-        try {
-            this.dolittleOutputChannel.appendLine('Loading dolittle project');
-            let config = await loadProjectConfiguration();
-            if (config === undefined) throw 'Project configuration was undefined';
-            _projectConfiguration.set(this, config);
-        } catch (error) {
-            throw error;
-        }
+        let config = await loadProjectConfiguration();
+        if (config === undefined) throw 'Project configuration was undefined';
+        _projectConfiguration.set(this, config);
+        
     }
 }
 export default new globals();

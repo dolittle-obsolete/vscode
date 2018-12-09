@@ -1,6 +1,5 @@
 import { Feature } from "./Feature";
 
-
 export class ModuleDefinition {
     /**
      *Creates an instance of ArtifactDefinition.

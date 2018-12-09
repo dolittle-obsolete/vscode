@@ -10,7 +10,7 @@
   "homepage": "https://dolittle.io",
     "license": "MIT",
     "engines": {
-        "vscode": "^1.28.0"
+        "vscode": "^1.29.0"
     },
     "categories": [
         "Other"
@@ -90,6 +90,11 @@
                 "command": "dolittle.createApplication",
                 "category": "Dolittle Project",
                 "title": "Create Application"
+            },
+            {
+                "command": "dolittle.reloadProject",
+                "category": "Dolittle Project",
+                "title": "Reload Projects"
             }
         ]
     },

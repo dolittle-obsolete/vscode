@@ -6,52 +6,47 @@ import { Core } from "./Core";
 import { readJsonFromUriSync, getDirectoryPath, getArtifactFolderPath, getEventsFolderPaths } from "../helpers";
 import { getArtifactsFromCore } from "./Artifacts";
 import { getTopologyFromCore, Topology } from "./Topology";
-import globals from "../globals";
-
+import globals from '../globals';
+const vscode = require('vscode');
 /**
  * Loads the bounded context configurations
  * @export
  * @returns {Promise<BoundedContextConfiguration[]>}
  */
 export async function loadBoundedContextConfigurations() {
-    const vscode = require('vscode');
     globals.dolittleProjectOutputChannel.appendLine('Loading bounded context configurations');
+    let uris = await vscode.workspace.findFiles('**/bounded-context.json', '**/node_modules/**');
+    if (!uris || uris.length == 0) {
+        globals.dolittleProjectOutputChannel.appendLine('Couldn\'t find any \'bounded-context.json\' file in the current workspace');
+        throw 'Couldn\'t find any \'bounded-context.json\' file in the current workspace';
+    }
+    let boundedContextConfigs = [];
+    for (let uri of uris) {
+        let workspace = vscode.workspace.getWorkspaceFolder(uri);
+        const filePath = uri.path;
+        const jsonObj = readJsonFromUriSync(uri);
+        
+        const application = jsonObj['application'];
+        const boundedContext = jsonObj['boundedContext'];
+        const boundedContextName = jsonObj['boundedContextName'];
+        const core = jsonObj['core'];uris
+        const coreLanguage = core.language || undefined;
+        
+        if (application === undefined || boundedContext === undefined || boundedContextName === undefined || coreLanguage === undefined) {
+            let msg = `Found an invalid bounded context configuration at path ${filePath}`;
+            globals.dolittleProjectOutputChannel.appendLine(msg);
+            vscode.window.showErrorMessage(msg);
+        } else {
 
-    return vscode.workspace.findFiles('**/bounded-context.json', '**/node_modules/**', 2)
-        .then(result => {
-            if (!result || result.length == 0) {
-                globals.dolittleProjectOutputChannel.appendLine('Couldn\'t find any \'bounded-context.json\' file in the current workspace');
-                throw 'Couldn\'t find any \'bounded-context.json\' file in the current workspace';
-            }
-            let boundedContextConfigs = [];
-            result.forEach( uri => {
-                let workspace = vscode.workspace.getWorkspaceFolder(uri);
-                const filePath = uri.path;
-                const jsonObj = readJsonFromUriSync(uri);
-                
-                const application = jsonObj['application'];
-                const boundedContext = jsonObj['boundedContext'];
-                const boundedContextName = jsonObj['boundedContextName'];
-                const core = jsonObj['core'];
-                const coreLanguage = core.language || undefined;
-                
-                if (application === undefined || boundedContext === undefined || boundedContextName === undefined || coreLanguage === undefined) {
-                    let msg = `Found an invalid bounded context configuration at path ${filePath}`;
-                    globals.dolittleProjectOutputChannel.appendLine(msg);
-                    vscode.window.showErrorMessage(msg);
-                } else {
-
-                    globals.dolittleProjectOutputChannel.appendLine(`Loaded bounded context configuration with id '${boundedContext}' and name '${boundedContextName}'`)
-                    
-                    boundedContextConfigs.push(new BoundedContextConfiguration(application, boundedContext, boundedContextName, new Core(coreLanguage), filePath, workspace));
-                }
-            });
-
-            return boundedContextConfigs;
+            globals.dolittleProjectOutputChannel.appendLine(`Loaded bounded context configuration with id '${boundedContext}' and name '${boundedContextName}'`)
             
-        }, error => {
-            throw error;
-        });
+            boundedContextConfigs.push(new BoundedContextConfiguration(application, boundedContext, boundedContextName, new Core(coreLanguage), filePath, workspace));
+        }
+    }
+
+    return boundedContextConfigs;
+            
+        
 }
 export class BoundedContextConfiguration {
     /**
