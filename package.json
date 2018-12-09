@@ -95,6 +95,11 @@
                 "command": "dolittle.reloadProject",
                 "category": "Dolittle Project",
                 "title": "Reload Projects"
+            },
+            {
+                "command": "dolittle.addArtifact",
+                "category": "Dolittle Artifacts",
+                "title": "Add"
             }
         ]
     },

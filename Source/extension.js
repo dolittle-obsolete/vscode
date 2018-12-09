@@ -3,14 +3,27 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { spawnDolittleCliCommand } from "./cli";
+import { spawnDolittleCliCommand, runDolittleCliCommandThroughIntegratedTerminal } from "./cli";
 import globals from "./globals";
 
 const vscode = globals.vscode;
 const project = require('./Project/Project');
 
-function ensureProjectConfiguration() {
-    if (globals.projectConfiguration === null) {
+/**
+ * @param {import("vscode").ExtensionContext} context
+ */
+function activate(context) {
+    process.addListener('unhandledRejection', (reason) => {
+        console.error('Rejection not handled', reason);
+    });
+    process.addListener('uncaughtException', (error) => {
+        console.error('Uncaught exception', error);
+    });
+    registerDolittleProjectCommands(context);
+    registerDolittleArtifactsCommands(context);
+}
+function ensureProjectConfiguration(refresh) {
+    if (globals.projectConfiguration === null || refresh === true) {
         globals.dolittleProjectOutputChannel.appendLine('Attempting to load dolittle project');
         return globals.setProjectConfiguration();
     }
@@ -26,27 +39,15 @@ function executeInContext(todo) {
         .then(
             success => todo(),
             error => {
-                vscode.window.showErrorMessage(`Failed to load dolittle projects.
-Error: ${error}`);
+                vscode.window.showErrorMessage(`Failed to load dolittle projects.\nError: ${error}`);
                 throw error;
             }
         );
 }
 
-/**
- * @param {import("vscode").ExtensionContext} context
- */
-function activate(context) {
-    process.addListener('unhandledRejection', (reason) => {
-        console.error('Rejection not handled', reason);
-    });
-    process.addListener('uncaughtException', (error) => {
-        console.error('Uncaught exception', error);
-    });
-
+function registerDolittleProjectCommands(context) {
     vscode.commands.registerCommand('dolittle.newDolittleProject', async () => {
         try {
-
             let applicationUris = await vscode.workspace.findFiles('**/application.json', '**/node_modules/**', 2);
             if (applicationUris.length > 0) {
                 globals.dolittleProjectOutputChannel.appendLine(`Found application.json files at paths ${applicationUris.map(uri => uri.fsPath).join(', ')}`);
@@ -60,10 +61,10 @@ function activate(context) {
         }
     });
     vscode.commands.registerCommand('dolittle.reloadProject', async () => {
-        await executeInContext(() => {})
+        await ensureProjectConfiguration(true)
             .then(
                 success => {},
-                error => {}
+                error => vscode.window.showErrorMessage(`Failed to load dolittle projects.\nError: ${error}`)
             );
     });
 
@@ -134,51 +135,102 @@ function activate(context) {
             }
         );
     });
-
+    
     vscode.commands.registerCommand('dolittle.createApplication', async () => {
-        await vscode.window.showInputBox({prompt: 'Application name'})
-            .then(applicationName => {
-                try {
-                    globals.dolittleOutputChannel.appendLine('Creating application');
-                    spawnDolittleCliCommand(
-                        ['create', 'application'], 
-                        [applicationName], 
-                        {cwd: vscode.workspace.workspaceFolders[0].uri.fsPath}
-                    ).on('close', (code => {
-                        if (code !== 0) throw 'Could not create application';
-                        globals.dolittleOutputChannel.appendLine(`Created application '${applicationName}'`);
-                    }));
-                } catch(err) {
-                    globals.dolittleProjectOutputChannel.appendLine(`Could not create application.\nError: ${err}`);
-                    vscode.window.showErrorMessage('Could not create application');
-                }
-            }, err => {
-                globals.dolittleProjectOutputChannel.appendLine(`Could not retrieve application name from input.\nError: ${err}`);
-                vscode.window.showErrorMessage('Could retrieve application name from input', err);
-            });
+        try {
+            const applicationName = await vscode.window.showInputBox({prompt: 'Application name', ignoreFocusOut: true});
+            globals.dolittleOutputChannel.appendLine('Creating application');
+            spawnDolittleCliCommand(
+                ['create', 'application'], 
+                [applicationName], 
+                {cwd: vscode.workspace.workspaceFolders[0].uri.fsPath}
+            ).on('close', (code => {
+                if (code !== 0) throw 'Could not create application';
+                globals.dolittleOutputChannel.appendLine(`Created application '${applicationName}'`);
+            }));
+        } catch(err) {
+            globals.dolittleProjectOutputChannel.appendLine(`Could not create application.\nError: ${err}`);
+            vscode.window.showErrorMessage('Could not create application');
+        }    
     });
     vscode.commands.registerCommand('dolittle.createBoundedContext', async () => {
-        await vscode.window.showInputBox({prompt: 'Bounded Context name'})
-            .then(boundedContextName => {
-                try {
+        try {
+            const boundedContextName = await vscode.window.showInputBox({prompt: 'Bounded Context name', ignoreFocusOut: true});
+            globals.dolittleOutputChannel.appendLine('Creating bounded context');
+            spawnDolittleCliCommand(
+                ['create', 'boundedcontext'], 
+                [boundedContextName], 
+                {cwd: vscode.workspace.workspaceFolders[0].uri.fsPath}
+            ).on('close', (code => {
+                if (code !== 0) throw 'Could not create bounded context';
+                globals.dolittleOutputChannel.appendLine(`Created bounded context '${boundedContextName}'`);
+            }));
+        } catch(err) {
+            globals.dolittleProjectOutputChannel.appendLine(`Could not create bounded context.\nError: ${err}`);
+            vscode.window.showErrorMessage('Could not create bounded context', err);
+        }
+    });
+}
 
-                    globals.dolittleOutputChannel.appendLine('Creating bounded context');
-                    spawnDolittleCliCommand(
-                        ['create', 'boundedcontext'], 
-                        [boundedContextName], 
-                        {cwd: vscode.workspace.workspaceFolders[0].uri.fsPath}
-                    ).on('close', (code => {
-                        if (code !== 0) throw 'Could not create bounded context';
-                        globals.dolittleOutputChannel.appendLine(`Created bounded context '${boundedContextName}'`);
-                    }));
-                } catch(err) {
-                    globals.dolittleProjectOutputChannel.appendLine(`Could not create bounded context.\nError: ${err}`);
-                    vscode.window.showErrorMessage('Could not create bounded context', err);
-                }
-            }, err => {
-                globals.dolittleProjectOutputChannel.appendLine(`Could not retrieve bounded context name from input.\nError: ${err}`);
-                vscode.window.showErrorMessage('Could retrieve bounded context name from input', err);
-            });
+function registerDolittleArtifactsCommands(context) {
+    const path = require('path');
+    const artifacts = [
+        'Command',
+        'Event',
+        'Read Model',
+        'Aggregate Root',
+        'Command Handler',
+        'Query',
+        'Event Processor',
+        'Concept'
+    ]
+    vscode.commands.registerTextEditorCommand('dolittle.addArtifact', async (editor) => {
+        try {
+            const pick = await vscode.window.showQuickPick(artifacts, {canPickMany: false, ignoreFocusOut: true});
+            let command = ['add'];
+            switch (pick) {
+                case 'Command':
+                    command.push('command');
+                    break;
+                case 'Event':
+                    command.push('event');
+                    break;
+                case 'Read Model':
+                    command.push('readmodel');
+                    break;
+                case 'Aggregate Root':
+                    command.push('aggregateroot');
+                    break;
+                case 'Command Handler':
+                    command.push('commandhandler');
+                    break;
+                case 'Query':
+                    const queryPick = await vscode.window.showQuickPick(['Query', 'Query For a Read Model'], {canPickMany: false, ignoreFocusOut: true});
+                    if (queryPick === 'Query') command.push('query');
+                    else command.push('queryfor');
+                    break;
+                case 'Event Processor':
+                    command.push('eventprocessor');
+                    break;
+                case 'Concept':
+                    const conceptPick = await vscode.window.showQuickPick(
+                        ['Concept', 'Int Concept', 'String Concept', 'GUID Concept'],
+                        {canPickMany: false, ignoreFocusOut: true}
+                    );
+                    if (conceptPick === 'Concept') command.push('concept');
+                    else if (conceptPick === 'Int Concept') command.push('intconcept');
+                    else if (conceptPick === 'String Concept') command.push('stringconcept');
+                    else if (conceptPick === 'GUID Concept') command.push('guidconcept');
+                    break;
+            }
+
+            const artifactName = await vscode.window.showInputBox({prompt: 'Artifact name: ', ignoreFocusOut: true});
+            let commandArgs = [artifactName];
+            runDolittleCliCommandThroughIntegratedTerminal(command, commandArgs, {cwd: path.dirname(editor.document.uri.fsPath)})
+        } catch (error) {
+            globals.dolittleProjectOutputChannel.appendLine(`Could not add artifact.\nError: ${error}`);
+            vscode.window.showErrorMessage('Could add artifact ', error);
+        }
     });
 }
 
