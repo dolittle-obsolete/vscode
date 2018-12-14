@@ -1,5 +1,7 @@
 
-
+const _feature = new WeakMap();
+const _name = new WeakMap();
+const _subFeatures = new WeakMap();
 export class Feature {
     /**
      *Creates an instance of ArtifactDefinition.
@@ -9,10 +11,40 @@ export class Feature {
      * @memberof ArtifactDefinition
      */
     constructor (feature, name, subFeatures) {
-        this.feature = feature;
-        this.name = name;
-        this.subFeatures = subFeatures.map(subFeature => new Feature(subFeature.feature, subFeature.name, subFeature.subFeatures));
+        _feature.set(this, feature);
+        _name.set(this, name);
+        _subFeatures.set(this, subFeatures.map(subFeature => new Feature(subFeature.feature, subFeature.name, subFeature.subFeatures)));
         
+    }
+    /**
+     *
+     *
+     * @readonly
+     * @memberof Feature
+     * @returns {string}
+     */
+    get feature() {
+        return _feature.get(this);
+    }
+    /**
+     *
+     *
+     * @readonly
+     * @memberof Feature
+     * @returns {string}
+     */
+    get name() {
+        return _name.get(this);
+    }
+    /**
+     *
+     *
+     * @readonly
+     * @memberof Feature
+     * @returns {Feature[]}
+     */
+    get subFeatures() {
+        return _subFeatures.get(this);
     }
     /**
      * 

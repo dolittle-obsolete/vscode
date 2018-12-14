@@ -1,4 +1,7 @@
 
+const _artifact = new WeakMap();
+const _generation = new WeakMap();
+const _type = new WeakMap();
 
 export class ArtifactDefinition {
     /**
@@ -9,16 +12,25 @@ export class ArtifactDefinition {
      * @memberof ArtifactDefinition
      */
     constructor (artifact, generation, type) {
-        this.artifact = artifact;
-        this.generation = generation;
-        this.type = type;
+        _artifact.set(this, artifact);
+        _generation.set(this, generation);
+        _type.set(this, type);
         
     }
+    get artifact() {
+        return _artifact.get(this);
+    }
+    get generation() {
+        return _generation.get(this);
+    }
+    get type() {
+        return _type.get(this);
+    }
 
-    get name() {
+    name() {
         return this.type.split(',')[0].split('.').pop();
     }
-    get area() {
+    area() {
         return this.type.split(',')[1].trim();
     }
 }

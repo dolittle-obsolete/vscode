@@ -15,6 +15,7 @@ export function getArtifactsFromCore(corePath) {
 
     return new Artifacts(readJsonFromFileSync(artifactsPath).artifacts);
 }
+const _artifacts = new WeakMap();
 export class Artifacts {
     /**
      * Creates an instance of Artifacts.
@@ -22,10 +23,10 @@ export class Artifacts {
      * @memberof Artifacts
      */
     constructor (artifacts) {
-        this._artifacts = new Map();
+        let artifactsMap = new Map();
         Object.keys(artifacts).forEach(key => {
             let artifactsPerFeature = artifacts[key];
-            this._artifacts.set(key, new ArtifactDefinitionsPerFeature(
+            artifactsMap.set(key, new ArtifactDefinitionsPerFeature(
                 key, 
                 artifactsPerFeature.commands, 
                 artifactsPerFeature.events, 
@@ -33,14 +34,15 @@ export class Artifacts {
                 artifactsPerFeature.readModels,
                 artifactsPerFeature.queries));
         });
+        _artifacts.set(this, artifactsMap);
     }
     /**
      *
-     * @returns {Map<string, ArtifactDefinitionsPerFeature>}
      * @readonly
      * @memberof Artifacts
+     * @returns {Map<string, ArtifactDefinitionsPerFeature>}
      */
     get artifacts() {
-        return this._artifacts;
+        return _artifacts.get(this);
     }
 }

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { Core } from "./Core";
 import { readJsonFromUriSync, getDirectoryPath, getArtifactFolderPath, getEventsFolderPaths } from "../helpers";
-import { getArtifactsFromCore } from "./Artifacts";
+import { getArtifactsFromCore, Artifacts } from "./Artifacts";
 import { getTopologyFromCore, Topology } from "./Topology";
 import globals from '../globals';
 const vscode = require('vscode');
@@ -48,6 +48,19 @@ export async function loadBoundedContextConfigurations() {
             
         
 }
+const _application = new WeakMap();
+const _boundedContext = new WeakMap();
+const _boundedContextName = new WeakMap();
+const _core = new WeakMap();
+const _path = new WeakMap();
+const _workspace = new WeakMap();
+const _rootPath = new WeakMap();
+const _domainFolder = new WeakMap();
+const _readFolder = new WeakMap();
+const _coreFolder = new WeakMap();
+const _eventFolders = new WeakMap();
+const _artifacts = new WeakMap();
+const _topology = new WeakMap();
 export class BoundedContextConfiguration {
     /**
       * Instantiates an instance of BoundedContext
@@ -59,56 +72,56 @@ export class BoundedContextConfiguration {
       * @param {{index: number, name: string, uri: import('vscode').Uri}} workspace 
       */
      constructor (application, boundedContext, boundedContextName, core, path, workspace) {
-        this._application = application;
-        this._boundedContext = boundedContext;
-        this._boundedContextName = boundedContextName;
-        this._core = core;
-        this._path = path;
-        this._workspace = workspace;
+        _application.set(this, application);
+        _boundedContext.set(this, boundedContext);
+        _boundedContextName.set(this, boundedContextName);
+        _core.set(this, core);
+        _path.set(this, path);
+        _workspace.set(this, workspace);
 
-        this._rootPath = getDirectoryPath(path);
-        this._domainFolder = getArtifactFolderPath(this._rootPath, 'domain')[0] || undefined;
-        this._readFolder = getArtifactFolderPath(this._rootPath, 'read')[0] || undefined;
-        this._coreFolder = getArtifactFolderPath(this._rootPath, 'core')[0] || undefined;
-        this._eventFolders = getEventsFolderPaths(this._rootPath, 'events');
+        _rootPath.set(this, getDirectoryPath(path));
+        _domainFolder.set(this, getArtifactFolderPath(this.rootPath, 'domain')[0] || undefined);
+        _readFolder.set(this, getArtifactFolderPath(this.rootPath, 'read')[0] || undefined);
+        _coreFolder.set(this,getArtifactFolderPath(this.rootPath, 'core')[0] || undefined);
+        _eventFolders.set(this, getEventsFolderPaths(this.rootPath, 'events'));
         
-        this._artifacts = getArtifactsFromCore(this.coreFolder);
-        this._topology = getTopologyFromCore(this.coreFolder);
+        _artifacts.set(this, getArtifactsFromCore(this.coreFolder));
+        _topology.set(this, getTopologyFromCore(this.coreFolder));
     }
     /**
-     *
-     *
+     * 
+     * @returns {Artifacts}
      */
     get artifacts() {
-        return this._artifacts;
+        return _artifacts.get(this);
     }
     /**
       * Gets the application GUID
       * @returns {string} The GUID of the Application
       */
     get application() {
-        return this._application;
+        return _application.get(this);
     }
     /**
       * Gets the bounded context GUID
       * @returns {string} The GUID of the bounded context
       */
     get boundedContext() {
-        return this._boundedContext;
+        return _boundedContext.get(this);
     }
     /**
       * Gets the name of the bounded context
       * @returns {string} Bounded Context name
       */
     get boundedContextName() {
-        return this._boundedContextName;
+        return _boundedContextName.get(this);
     }
     /**
       * Gets the core configuration 
       * @returns {Core}
       */
     get core() {
-        return this._core;
+        return _core.get(this);
     }
     /**
      * Gets the bounded context configuration's path
@@ -117,10 +130,10 @@ export class BoundedContextConfiguration {
      * @memberof BoundedContextConfiguration
      */
     get path() {
-        return this._path;
+        return _path.get(this);
     }
     get workspace() {
-        return this._workspace;
+        return _workspace.get(this);
     }
     /**
      * Gets the path of the root folder of the bounded context
@@ -130,7 +143,7 @@ export class BoundedContextConfiguration {
      * @returns {string} 
      */
     get rootPath() {
-        return this._rootPath;
+        return _rootPath.get(this);
     }
     /**
      *
@@ -140,19 +153,19 @@ export class BoundedContextConfiguration {
      * @returns {Topology}
      */
     get topology() {
-        return this._topology;
+        return _topology.get(this);
     }
 
     get domainFolder() {
-        return this._domainFolder;
+        return _domainFolder.get(this);
     }
     get readPath() {
-        return this._readFolder;
+        return _readFolder.get(this);
     }
     get coreFolder() {
-        return this._coreFolder;
+        return _coreFolder.get(this);
     }
     get eventsFolders() {
-        return this._eventFolders;
+        return _eventFolders.get(this);
     }
 }

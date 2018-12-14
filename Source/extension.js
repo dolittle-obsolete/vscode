@@ -5,6 +5,7 @@
 
 import { spawnDolittleCliCommand, runDolittleCliCommandThroughIntegratedTerminal } from "./cli";
 import globals from "./globals";
+import { BoundedContextNodeProvider } from "./Explorer/BoundedContextNodeProvider";
 
 const vscode = globals.vscode;
 const project = require('./Project/Project');
@@ -21,6 +22,16 @@ function activate(context) {
     });
     registerDolittleProjectCommands(context);
     registerDolittleArtifactsCommands(context);
+    vscode.commands.registerCommand('dolittle.loadView', async () => {
+        await ensureProjectConfiguration(true)
+        .then(
+            success => {
+                vscode.window.createTreeView('features', {treeDataProvider: new BoundedContextNodeProvider(globals.projectConfiguration)});
+            },
+            error => vscode.window.showErrorMessage(`Failed to load dolittle projects.\nError: ${error}`)
+        );
+        
+    });
 }
 function ensureProjectConfiguration(refresh) {
     if (globals.projectConfiguration === null || refresh === true) {

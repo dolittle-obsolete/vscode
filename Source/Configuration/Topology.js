@@ -15,6 +15,8 @@ export function getTopologyFromCore(corePath) {
 
     return new Topology(readJsonFromFileSync(topologyPath));
 }
+const _modules = new WeakMap();
+const _features = new WeakMap();
 export class Topology {
     /**
      * Creates an instance of Artifacts.
@@ -22,8 +24,28 @@ export class Topology {
      * @memberof Artifacts
      */
     constructor (topology) {
-        this.modules = topology.modules.map(module => new ModuleDefinition(module.module, module.name, module.features));
-        this.features = topology.features.map(feature => new Feature(feature.feature, feature.name, feature.subFeatures));
+        _modules.set(this, topology.modules.map(module => new ModuleDefinition(module.module, module.name, module.features)));
+        _features.set(this, topology.features.map(feature => new Feature(feature.feature, feature.name, feature.subFeatures)));
+    }
+    /**
+     *
+     *
+     * @readonly
+     * @memberof Topology
+     * @returns {ModuleDefinition[]}
+     */
+    get modules() {
+        return _modules.get(this);
+    }
+    /**
+     *
+     *
+     * @readonly 
+     * @memberof Topology
+     * @returns {Feature[]}
+     */
+    get features() {
+        return _features.get(this);
     }
 
     hasModules() {

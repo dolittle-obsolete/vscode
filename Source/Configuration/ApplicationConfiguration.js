@@ -40,6 +40,9 @@ export async function loadApplicationConfiguration() {
     }
 
 }
+const _application = new WeakMap();
+const _path = new WeakMap();
+const _rootPath = new WeakMap();
 export class ApplicationConfiguration {
 
     /**
@@ -49,9 +52,9 @@ export class ApplicationConfiguration {
      * @memberof ApplicationConfiguration
      */
     constructor (application, path) {
-        this._application = application;
-        this._path = path;
-        this._rootPath = getDirectoryPath(path);
+        _application.set(this,application);
+        _path.set(this, path);
+        _rootPath.set(this, getDirectoryPath(path));
     }
 
     /**
@@ -61,7 +64,7 @@ export class ApplicationConfiguration {
      * @returns {{id:string, name:string}} The path to the application configuration file
      */
     get application(){
-        return this._application;
+        return _application.get(this);
     }
     /**
      * Gets the application configuration's path
@@ -70,7 +73,7 @@ export class ApplicationConfiguration {
      * @returns {string}
      */
     get path() {
-        return this._path;
+        return _path.get(this);
     }
     /**
      * Get the root directory of the application
@@ -79,6 +82,6 @@ export class ApplicationConfiguration {
      * @returns {string} The path to the application configuration file
      */
     get rootPath(){
-        return this._rootPath;
+        return _rootPath.get(this);
     }
 }

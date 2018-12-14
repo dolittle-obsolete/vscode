@@ -4,21 +4,22 @@ import { ArtifactDefinitionsPerFeature } from '../Configuration/ArtifactDefiniti
 import { Feature } from '../Configuration/Feature';
 import { ArtifactNode } from './ArtifactNode';
 
+const _subFeatures = new WeakMap();
+const _artifacts = new WeakMap();
 export class FeatureNode extends TreeItem {
     /**
      *Creates an instance of FeatureNode.
-     * @param {Feature} feature
+     * @param {string} featureId
      * @memberof FeatureNode
      */
-    constructor (label, collapsibleState, feature) {
-        super(feature.name, TreeItemCollapsibleState.Collapsed);
-        this._features = [];
-        this._artifacts = [];
-        feature.subFeatures.forEach(subFeature => this.addSubFeature(new FeatureNode(subFeature.name, TreeItemCollapsibleState.Collapsed, subFeature)));
-        super.tooltip = `Feature id: '${feature.feature}'`;
+    constructor (label, collapsibleState, featureId) {
+        super(`${label} - Feature`, collapsibleState);
+        _subFeatures.set(this, []);
+        _artifacts.set(this, []);
+       super.tooltip = `Feature id: '${featureId}'`;
     }
     get children() {
-        return this._artifacts.concat(this._features);
+        return _subFeatures.get(this).concat(_artifacts.get(this));
     }
     /**
      * 
@@ -27,7 +28,7 @@ export class FeatureNode extends TreeItem {
      * @memberof FeatureNode
      */
     addSubFeature(feature) {
-        this._features.push(feature);
+        _subFeatures.get(this).push(feature);
     }
 
     /**
@@ -37,6 +38,6 @@ export class FeatureNode extends TreeItem {
      * @memberof FeatureNode
      */
     addArtifact(artifact) {
-        this._artifacts.push(artifact);
+        _artifacts.get(this).push(artifact);
     }
 }

@@ -1,5 +1,8 @@
 import { Feature } from "./Feature";
 
+const _module = new WeakMap();
+const _name = new WeakMap();
+const _features = new WeakMap();
 export class ModuleDefinition {
     /**
      *Creates an instance of ArtifactDefinition.
@@ -9,10 +12,40 @@ export class ModuleDefinition {
      * @memberof ArtifactDefinition
      */
     constructor (module, name, features) {
-        this.module = module;
-        this.name = name;
-        this.features = features.map(feature => new Feature(feature.feature, feature.name, feature.subFeatures));
+        _module.set(this, module);
+        _name.set(this, name);
+        _features.set(this, features.map(feature => new Feature(feature.feature, feature.name, feature.subFeatures)));
         
+    }
+    /**
+     * 
+     *
+     * @readonly
+     * @memberof ModuleDefinition
+     * @returns {string}
+     */
+    get module() {
+        return _module.get(this);
+    }
+    /**
+     * 
+     *
+     * @readonly
+     * @memberof ModuleDefinition
+     * @returns {string}
+     */
+    get name() {
+        return _name.get(this);
+    }
+    /**
+     *
+     *
+     * @readonly
+     * @memberof ModuleDefinition
+     * @returns {Feature[]}
+     */
+    get features() {
+        return _features.get(this);
     }
     /**
      *
