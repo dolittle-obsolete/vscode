@@ -1,11 +1,12 @@
-import { readJsonFromUriSync, getDirectoryPath } from '../helpers';
-import globals from '../globals';
-
-const vscode = require('vscode');
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Dolittle. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+
+import { readJsonFromUriSync, getDirectoryPath } from '../helpers';
+import globals from '../globals';
+
+const vscode = require('vscode');
 
 /**
  * Loads application configurations from the current workspace
@@ -30,55 +31,68 @@ export async function loadApplicationConfiguration() {
 
     const jsonObj = readJsonFromUriSync(applicationUri);
 
-    const applicationId = jsonObj['id'];
-    const applicationName = jsonObj['name'];
-    if (applicationId === undefined || applicationName === undefined) {
+    const id = jsonObj['id'];
+    const name = jsonObj['name'];
+    if (id === undefined || name === undefined) {
         globals.dolittleProjectOutputChannel.appendLine(`Found an invalid application configuration at path ${filePath}`);
+        throw new Error('Found an invalid application configuration')
     } else {
-        globals.dolittleProjectOutputChannel.appendLine(`Loaded application configuration with id '${applicationId}' and name '${applicationName}'`);
-        return new Application({id: applicationId, name: applicationName}, filePath);
+        globals.dolittleProjectOutputChannel.appendLine(`Loaded application configuration with id '${id}' and name '${name}'`);
+        return new Application(id, name, filePath);
     }
 
 }
 export class Application {
-    #application;
-    #path;
-    #rootPath;
+    #id: string;
+    #name: string;
+    #path: string;
+    #rootPath: string;
     /**
      *Creates an instance of Application.
-     * @param {{id: string, name: string}} application
+     * @param {string} id
+     * @param {string} name
      * @param {string} path path
-     * @memberof ApplicationConfiguration
+     * @memberof Application
      */
-    constructor (application, path) {
-        this.#application = application;
+    constructor (id, name, path) {
+        this.#id = id;
+        this.#name = name;
         this.#path = path;
         this.#rootPath = getDirectoryPath(path);
     }
 
     /**
-     * Gets the application configuration
+     * Gets the application id
+     * 
      * @readonly
-     * @memberof ApplicationConfiguration
-     * @returns {{id:string, name:string}} The path to the application configuration file
+     * @memberof Application
      */
-    get application(){
-        return this.#application;
+    get id() {
+        return this.#id;
+    }
+    /**
+     * Gets the application name
+     *
+     * @readonly
+     * @memberof Application
+     */
+    get name() {
+        return this.#name;
     }
     /**
      * Gets the application configuration's path
+     * 
      * @readonly
-     * @memberof ApplicationConfiguration
-     * @returns {string}
+     * @memberof Application
      */
     get path() {
         return this.#path;
     }
     /**
      * Get the root directory of the application
+     * 
      * @readonly
-     * @memberof ApplicationConfiguration
-     * @returns {string} The path to the application configuration file
+     * @memberof Application
      */
     get rootPath(){
         return this.#rootPath;

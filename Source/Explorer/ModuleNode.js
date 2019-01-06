@@ -7,7 +7,7 @@ import {TreeItem, TreeItemCollapsibleState} from 'vscode';
 import { FeatureNode } from './FeatureNode';
 
 export class ModuleNode extends TreeItem {
-    #features;
+    #features: FeatureNode[];
     /**
      *Creates an instance of ModuleNode.
      * @param {string} label
@@ -20,14 +20,29 @@ export class ModuleNode extends TreeItem {
         super.tooltip = `Module id: '${moduleId}'`;
         this.#features = [];
     }
-    get children() {
+    /**
+     * Gets the features
+     *
+     * @readonly
+     * @memberof ModuleNode
+     */
+    get features() {
         return this.#features;
     }
     /**
-     * 
+     * Gets the children nodes
+     *
+     * @readonly
+     * @memberof ModuleNode
+     */
+    get children() {
+        return this.features;
+    }
+    /**
+     * Adds a feature node to the modulenode
      *
      * @param {FeatureNode} feature
-     * @memberof FeatureNode
+     * @memberof ModuleNode
      */
     addFeature(feature) {
         this.#features.push(feature);

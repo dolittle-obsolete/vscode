@@ -9,7 +9,8 @@ import { FeatureNode } from './FeatureNode';
 import { ModuleNode } from './ModuleNode';
 
 export class BoundedContextNode extends TreeItem {
-    #childNodes;
+    #id: string;
+    #childNodes: FeatureNode[] | ModuleNode[];
     /**
      *Creates an instance of BoundedContextNode.
      * @param {string} label Bounded context name
@@ -20,26 +21,46 @@ export class BoundedContextNode extends TreeItem {
     constructor (label, collapsibleState, id) {
         super(`${label} - Bounded Context`, collapsibleState);
         super.tooltip = `id: '${id}'`;
+        
+        this.#id = id;
         this.#childNodes = [];
+        
     }
     /**
-     * Gets the features of this bounded context
+     * Gets the bounded context's id
      *
      * @readonly
      * @memberof BoundedContextNode
-     * @returns {FeatureNode[]}
      */
-    get children() {
+    get id() {
+        return this.#id;
+    }
+    /**
+     * Gets the child nodes
+     *
+     * @readonly
+     * @memberof BoundedContextNode
+     */
+    get childNodes() {
         return this.#childNodes;
     }
     /**
-     * Adds a feature to the bounded context
+     * Gets the feature- and module-nodes of this bounded context
      *
-     * @param {FeatureNode | ModuleNode} feature
+     * @readonly
      * @memberof BoundedContextNode
      */
-    addChildNode(feature) {
-        this.#childNodes.push(feature);
+    get children() {
+        return this.childNodes;
+    }
+    /**
+     * Adds a feature or module to the bounded context
+     *
+     * @param {FeatureNode | ModuleNode} node
+     * @memberof BoundedContextNode
+     */
+    addChildNode(node) {
+        this.#childNodes.push(node);
     }
     
 }

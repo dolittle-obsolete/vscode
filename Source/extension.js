@@ -32,6 +32,7 @@ function activate(context) {
         
     });
 }
+globals.commonToolingManager.
 function ensureProjectConfiguration(refresh) {
     if (globals.projectConfiguration === null || refresh === true) {
         globals.dolittleProjectOutputChannel.appendLine('Attempting to load dolittle project');
@@ -61,7 +62,7 @@ function registerDolittleProjectCommands(context) {
             let applicationUris = await vscode.workspace.findFiles('**/application.json', '**/node_modules/**', 2);
             if (applicationUris.length > 0) {
                 globals.dolittleProjectOutputChannel.appendLine(`Found application.json files at paths ${applicationUris.map(uri => uri.fsPath).join(', ')}`);
-                throw 'Could not start new dolittle project because there already exists a dolittle application here!';
+                throw new Error('Could not start new dolittle project because there already exists a dolittle application here!');
             }
             await vscode.commands.executeCommand('dolittle.project.createApplication');
             await vscode.commands.executeCommand('dolittle.project.createBoundedContext');
@@ -219,8 +220,8 @@ function registerDolittleArtifactsCommands(context) {
 
             const artifactName = await vscode.window.showInputBox({prompt: 'Artifact name: ', ignoreFocusOut: true});
             let commandArgs = [artifactName];
-            
-            runDolittleCliCommandThroughIntegratedTerminal(command, commandArgs, {cwd: path.dirname(editor.document.uri.fsPath)})
+
+            // runDolittleCliCommandThroughIntegratedTerminal(command, commandArgs, {cwd: path.dirname(editor.document.uri.fsPath)})
         } catch (error) {
             globals.dolittleProjectOutputChannel.appendLine(`Could not add artifact.\nError: ${error}`);
             vscode.window.showErrorMessage('Could add artifact ', error);

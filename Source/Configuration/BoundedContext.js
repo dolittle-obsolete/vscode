@@ -8,6 +8,8 @@ import { readJsonFromUriSync, getDirectoryPath, getArtifactFolderPath, getEvents
 import { getArtifactsFromCore, Artifacts } from "./Artifacts";
 import { getTopologyFromCore, Topology } from "./Topology";
 import globals from '../globals';
+import { Uri } from "vscode";
+
 const vscode = require('vscode');
 
 /**
@@ -49,19 +51,19 @@ export async function loadBoundedContextConfigurations() {
     return boundedContextConfigs;
 }
 export class BoundedContext {
-    #application;
-    #boundedContext;
-    #boundedContextName;
-    #core;
-    #path;
-    #workspace;
-    #rootPath;
-    #domainFolder;
-    #readFolder;
-    #coreFolder;
-    #eventFolders;
-    #artifacts;
-    #topology;
+    #application: string;
+    #boundedContext: string;
+    #boundedContextName: string;
+    #core: Core;
+    #path: string;
+    #workspace: {index: number, name: string, uri: Uri};
+    #rootPath: string;
+    #domainFolder: string;
+    #readFolder: string;
+    #coreFolder: string;
+    #eventFolders: string[];
+    #artifacts: Artifacts;
+    #topology: Topology;
     
     /**
       * Instantiates an instance of BoundedContext
@@ -90,49 +92,65 @@ export class BoundedContext {
         this.#topology = getTopologyFromCore(this.coreFolder);
     }
     /**
-     * 
-     * @returns {Artifacts}
+     * Gets the artifacts configuration
+     *
+     * @readonly
+     * @memberof BoundedContext
      */
     get artifacts() {
         return this.#artifacts;
     }
     /**
-      * Gets the application GUID
-      * @returns {string} The GUID of the Application
-      */
+     * Gets the application GUID
+     * 
+     * @readonly
+     * @memberof BoundedContext
+     */
     get application() {
         return this.#application;
     }
     /**
-      * Gets the bounded context GUID
-      * @returns {string} The GUID of the bounded context
-      */
+     * Gets the bounded context GUID
+     * 
+     * @readonly
+     * @memberof BoundedContext
+     */
     get boundedContext() {
         return this.#boundedContext;
     }
     /**
-      * Gets the name of the bounded context
-      * @returns {string} Bounded Context name
-      */
+     * Gets the name of the bounded context
+     * @readonly
+     * @memberof BoundedContext
+     */
     get boundedContextName() {
         return this.#boundedContextName;
     }
     /**
-      * Gets the core configuration 
-      * @returns {Core}
-      */
+     * Gets the core configuration 
+     * 
+     * @readonly
+     * @memberof BoundedContext
+     */
     get core() {
         return this.#core;
     }
     /**
      * Gets the bounded context configuration's path
      *
+     * 
      * @readonly
      * @memberof BoundedContextConfiguration
      */
     get path() {
         return this.#path;
     }
+    /**
+     * Gets the workspace of the bounded context configuration
+     *
+     * @readonly
+     * @memberof BoundedContext
+     */
     get workspace() {
         return this.#workspace;
     }
@@ -141,31 +159,52 @@ export class BoundedContext {
      * 
      * @readonly
      * @memberof BoundedContextConfiguration
-     * @returns {string} 
      */
     get rootPath() {
         return this.#rootPath;
     }
     /**
-     *
+     * Gets the topology configuration
      *
      * @readonly
      * @memberof BoundedContextConfiguration
-     * @returns {Topology}
      */
     get topology() {
         return this.#topology;
     }
-
+    /**
+     * Gets the path of the domain folder
+     *
+     * @readonly
+     * @memberof BoundedContext
+     */
     get domainFolder() {
         return this.#domainFolder;
     }
+    /**
+     * Gets the path of the read folder
+     *
+     * @readonly
+     * @memberof BoundedContext
+     */
     get readPath() {
         return this.#readFolder;
     }
+    /**
+     * Gets the path of the core folder
+     *
+     * @readonly
+     * @memberof BoundedContext
+     */
     get coreFolder() {
         return this.#coreFolder;
     }
+    /**
+     * Gets the paths of the events folders
+     *
+     * @readonly
+     * @memberof BoundedContext
+     */
     get eventsFolders() {
         return this.#eventFolders;
     }

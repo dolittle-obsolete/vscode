@@ -19,8 +19,8 @@ export async function loadProjectConfiguration() {
 }
 
 export class ProjectConfiguration {
-    #application;
-    #boundedContexts;
+    #application: Application;
+    #boundedContexts: BoundedContext[];
     /**
      *Creates an instance of ProjectConfiguration.
      * @param {Application} application
@@ -33,16 +33,16 @@ export class ProjectConfiguration {
     }
     /**
      * Gets the application configuration for this project
+     * 
      * @readonly
      * @memberof ProjectConfiguration
-     * @returns {Application}
      */
     get application() {
         return this.#application;
     }
     /**
      * Gets the bounded contexts of this project
-     * @returns {BoundedContext[]}
+     * 
      * @readonly
      * @memberof ProjectConfiguration
      */

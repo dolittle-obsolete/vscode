@@ -5,8 +5,9 @@
 
 import {TreeItem, TreeItemCollapsibleState} from 'vscode';
 
-
 export class ArtifactNode extends TreeItem {
+    #artifactType: string;
+    #id: string;
     /**
      *Creates an instance of ArtifactNode.
      * @param {string} label
@@ -18,6 +19,29 @@ export class ArtifactNode extends TreeItem {
     constructor (label, collapsibleState, id, artifactType) {
         super(`${label} - ${artifactType}`, collapsibleState);
         super.tooltip = `Artifact id: '${id}'`;
-        
+        // super.iconPath = Set icon  
+        this.#artifactType = artifactType;
+        this.#id = id;
+
+        // TODO: Each artifact type should have its own image 
     }    
+    /**
+     * Gets the artifact type
+     *
+     * @readonly
+     * @memberof ArtifactNode
+     */
+    get artifactType() {
+        return this.#artifactType;
+    }
+    /**
+     * Gets the id
+     *
+     * @readonly
+     * @memberof ArtifactNode
+     */
+    get id() {
+        return this.#id;
+    }
+    
 }

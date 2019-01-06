@@ -5,8 +5,16 @@
 
 import { fileExistsSync, readJsonFromFileSync } from "../helpers";
 import { ModuleDefinition } from "./ModuleDefinition";
-import { Feature } from "./Feature";
+import { FeatureDefinition } from "./FeatureDefinition";
 
+/**
+ * Represents the module id
+ * @typedef {string} Module 
+ */
+/**
+ * Represents the feature id
+ * @typedef {string} Feature 
+ */
 /**
  * 
  *
@@ -18,62 +26,83 @@ export function getTopologyFromCore(corePath) {
     const topologyPath = path.join(corePath, '.dolittle',  'topology.json');
     if (! fileExistsSync(topologyPath)) throw `Couldn't find file at path '${topologyPath}'`;
 
-    return new Topology(readJsonFromFileSync(topologyPath));
+    let topology = readJsonFromFileSync(topologyPath);
+    return new Topology(topology.modules, topology.features);
 }
 export class Topology {
-    #modules;
-    #features;
+    #modules: Map<Module, ModuleDefinition>;
+    #features: Map<Feature, FeatureDefinition>;
     /**
-     * Creates an instance of Artifacts.
-     * @param {{modules: {module: string, name: string, features: any[]}[], features: {feature: string, name: string, subFeatures: any[]}[]}} topology
+     * Creates an instance of {Topology}.
+     * @param {Map<Module, ModuleDefinition>} modules
+     * @param {Map<Feature, FeatureDefinition>} features
      * @memberof Artifacts
      */
-    constructor (topology) {
-        this.#modules = topology && topology.modules? topology.modules.map(module => new ModuleDefinition(module.module, module.name, module.features)) : [];
-        this.#features = topology && topology.features? topology.features.map(feature => new Feature(feature.feature, feature.name, feature.subFeatures)) : [];
+    constructor (modules, features) {
+        let modulesMap = new Map();
+        let featuresMap = new Map();
+        if (modules) {
+            Object.keys(modules).forEach( module => {
+                let obj = modules[module];
+                modulesMap.set(module, new ModuleDefinition(obj.name, obj.features));
+            });
+        }
+        if (features) {
+            Object.keys(features).forEach( feature => {
+                let obj = features[module];
+                featuresMap.set(feature, new FeatureDefinition(obj.name, obj.subFeatures));
+            });
+        }
+        this.#modules = modulesMap;
+        this.#features = featuresMap;
     }
     /**
-     *
+     * Gets the map of modules
      *
      * @readonly
      * @memberof Topology
-     * @returns {ModuleDefinition[]}
      */
     get modules() {
         return this.#modules;
     }
     /**
-     *
+     * Gets the map of features
      *
      * @readonly 
      * @memberof Topology
-     * @returns {Feature[]}
      */
     get features() {
         return this.#features;
     }
-
+    /**
+     * Gets whether or not the topology has modules or not 
+     *
+     * @returns {boolean}
+     * @memberof Topology
+     */
     hasModules() {
-        return this.#modules.length > 0;
+        return this.modules.length > 0;
     }
     /**
+     * Finds a specific feature
      *
-     *
-     * @param {string} feature The feature id
-     * @returns {Feature}
+     * @param {Feature} feature The feature id
+     * @returns {FeatureDefinition}
      * @memberof Topology
      */
     findFeature(feature) {
         if (this.hasModules()) {
-            for ( let module of this.#modules) {
-                let res = module.findFeature(feature);
-                if (res !== null) return res;
+            if (this.modules.has(feature)) return this.modules.get(feature);
+            for ( let [moduleId, moduleObj] of this.modules) {
+                let res = moduleObj.findFeature(feature);
+                if (res) return res;
             };
         }
         else {
-            for (let featureToSearch of this.#features) {
-                let res = featureToSearch.findFeature(feature);
-                if (res !== null) return res;
+            if (this.features.has(feature)) return this.features.get(feature);
+            for (let [featureId, featureObj] of this.features) {
+                let res = featureObj.findFeature(feature);
+                if (res) return res;
             }
         }
         return null;

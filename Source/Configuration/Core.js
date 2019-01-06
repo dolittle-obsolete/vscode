@@ -6,10 +6,9 @@
 /**
   * Represents a Bounded Context's core configuration
   */
-
 export class Core
 {
-    #language;
+    #language: string;
     /**
       * Instantiates an instance of Core
       * @param {string} language 
@@ -17,10 +16,13 @@ export class Core
     constructor (language) {
         this.#language = language;
     }
+    
     /**
-      * Gets the programming language
-      * @returns {string} The string representing the programming language
-      */
+     * Gets the core language
+     *
+     * @readonly
+     * @memberof Core
+     */
     get language() {
         return this.#language;
     }

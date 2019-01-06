@@ -3,18 +3,19 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-// import { Dependency } from '@dolittle/tooling.common/Source/dependencies/Dependency';
+import {BoilerPlatesManager, ApplicationsManager, BoundedContextsManager, ArtifactsManager, DependenciesManager } from '@dolittle/tooling.common';
+import { PromptManager } from './PromptManager';
 
 const vscode = require('vscode');
 
 export class CommonToolingManager {
-    #boilerPlatesManager;
-    #applicationsManager;
-    #boundedContextsManager;
-    #artifactsManager;
-    #dependenciesManager;
-    #promptManager;
-    #logger;
+    #boilerPlatesManager: BoilerPlatesManager;
+    #applicationsManager: ApplicationsManager;
+    #boundedContextsManager: BoundedContextsManager;
+    #artifactsManager: ArtifactsManager;
+    #dependenciesManager: DependenciesManager;
+    #promptManager: PromptManager;
+    #logger: import('winston').Logger;
 
     constructor(boilerPlatesManager, applicationsManager, boundedContextsManager, artifactsManager, dependenciesManager, promptManager, logger) {
         this.#boilerPlatesManager = boilerPlatesManager;
@@ -26,34 +27,58 @@ export class CommonToolingManager {
         this.#logger = logger;
 
     }
+    get boilerPlatesManager() {return this.#boilerPlatesManager}
+    get applicationsManager() {return this.#applicationsManager}
+    get boundedContextsManager() {return this.#boundedContextsManager}
+    get artifactsManager() {return this.#artifactsManager}
+    get dependenciesManager() {return this.#dependenciesManager}
+    get promptManager() {return this.#promptManager}
+    get logger() {return this.#logger}
 
+    /**
+     * Creates an application
+     *
+     * @param {string} [language='any']
+     * @param {*} [destinationFolder=vscode.workspace.workspaceFolders[0].uri.fsPath]
+     * @returns {Promise<boolean>}
+     * @memberof CommonToolingManager
+     */
     async createApplication(language = 'any', destinationFolder = vscode.workspace.workspaceFolders[0].uri.fsPath) {
-        let dependencies = this.#applicationsManager.getDependencies(language);
-        let context = await this.#promptManager.generateContext(dependencies, language, destinationFolder);
-        this.#applicationsManager.createApplication(context, destinationFolder);
+        let dependencies = this.applicationsManager.getDependencies(language);
+        let context = await this.promptManager.generateContext(dependencies, language, destinationFolder);
+        return this.applicationsManager.createApplication(context, destinationFolder);
     }
     /**
      * Creates a Bounded Context
      *
      * @param {string} [language='csharp']
      * @param {string} [destinationFolder=vscode.workspace.workspaceFolders[0].uri.fsPath]
+     * @returns {Promise<boolean>}
      * @memberof CommonToolingManager
      */
     async createBoundedContext(language = 'csharp', destinationFolder = vscode.workspace.workspaceFolders[0].uri.fsPath) {
-        if (!this.#applicationsManager.hasApplication(destinationFolder)) throw new Error('Could not create bounded context - application configuration not found');
-        let dependencies = this.#boundedContextsManager.getDependencies(language);
-        let context = await this.#promptManager.generateContext(dependencies, language, destinationFolder);
-        if (! this.#boundedContextsManager.createBoundedContext(context, language, destinationFolder)) {
-            throw new Error('Failed to create bounded context');
-        }
+        let application = this.applicationsManager.getApplicationFrom(destinationFolder);
+        if (!application) throw new Error('Could not create bounded context - application configuration not found');
+        let dependencies = this.boundedContextsManager.getDependencies(language);
+        let context = await this.promptManager.generateContext(dependencies, language, destinationFolder);
+        context['applicationId'] = application.id; // Hard coded, for now
+        return this.boundedContextsManager.createBoundedContext(context, language, destinationFolder);
 
     }
-    async addArtifact(artifactType, language = 'csharp', destinationFolder = vscode.workspace.workspaceFolders[0].uri.fspath) {
-        let artifactTemplate = this.#artifactsManager.getArtifactTemplate(language, artifactType);
+    /**
+     * Adds an artifact
+     *
+     * @param {string} artifactType
+     * @param {string} [language='csharp']
+     * @param {string} [destinationFolder=vscode.workspace.workspaceFolders[0].uri.fsPath]
+     * @memberof CommonToolingManager
+     */
+    async addArtifact(artifactType, language = 'csharp', destinationFolder = vscode.workspace.workspaceFolders[0].uri.fsPath) {
+        let artifactTemplate = this.artifactsManager.getArtifactTemplate(language, artifactType);
         if (!artifactTemplate) throw new Error(`Failed to add artifact - artifact template for artifact type '${artifactType}' and language '${language}' could not be found`);
         let dependencies = this.artifactsManager.getDependencies(artifactType, language);
-        let context = await this.#promptManager.generateContext(dependencies, language, destinationFolder);
-        this.#artifactsManager.createArtifact(context, language, artifactTemplate, destinationFolder);
+        let context = await this.promptManager.generateContext(dependencies, language, destinationFolder);
+        this.artifactsManager.createArtifact(context, language, artifactTemplate, destinationFolder);
     }
     /**
      * Updates the boilerplates
@@ -62,7 +87,7 @@ export class CommonToolingManager {
      * @memberof CommonToolingManager
      */
     async updateBoilerPlates() {
-        return this.#boilerPlatesManager.update();
+        return this.boilerPlatesManager.update();
     }
 }
 

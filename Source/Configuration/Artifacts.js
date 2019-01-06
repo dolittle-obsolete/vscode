@@ -3,11 +3,16 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BoundedContext } from "./BoundedContext";
-import { ArtifactDefinitionsPerFeature } from "./ArtifactDefinitionsPerFeature";
+import { ArtifactsByTypeDefinition } from "./ArtifactsByTypeDefinition";
 import { fileExistsSync, readJsonFromFileSync } from "../helpers";
 
 const path = require('path');
+
+/**
+ * Represents the Feature id
+ * @typedef {string} Feature 
+ */
+
 
 /**
  * 
@@ -19,34 +24,35 @@ export function getArtifactsFromCore(corePath) {
     const artifactsPath = path.join(corePath, '.dolittle',  'artifacts.json');
     if (! fileExistsSync(artifactsPath)) throw `Couldn't find file at path '${artifactsPath}'`;
 
-    return new Artifacts(readJsonFromFileSync(artifactsPath).artifacts);
+    return new Artifacts(readJsonFromFileSync(artifactsPath));
 }
 export class Artifacts {
-    #artifacts;
+    #artifacts: Map<Feature, ArtifactsByTypeDefinition>;
     /**
      * Creates an instance of Artifacts.
-     * @param {any} artifacts 
+     * @param {Map<Feature, ArtifactsByTypeDefinition} artifacts 
      * @memberof Artifacts
      */
     constructor (artifacts) {
         let artifactsMap = new Map();
-        Object.keys(artifacts).forEach(key => {
-            let artifactsPerFeature = artifacts[key];
-            artifactsMap.set(key, new ArtifactDefinitionsPerFeature(
-                key, 
-                artifactsPerFeature.commands, 
-                artifactsPerFeature.events, 
-                artifactsPerFeature.eventSources, 
-                artifactsPerFeature.readModels,
-                artifactsPerFeature.queries));
-        });
+        if (artifacts) {
+            Object.keys(artifacts).forEach(key => {
+                let artifactsPerFeature = artifacts[key];
+                artifactsMap.set(key, new ArtifactsByTypeDefinition(
+                    artifactsPerFeature.commands, 
+                    artifactsPerFeature.events, 
+                    artifactsPerFeature.eventSources, 
+                    artifactsPerFeature.readModels,
+                    artifactsPerFeature.queries));
+            });    
+        }
         this.#artifacts = artifactsMap;
     }
     /**
-     *
+     * Gets the artifacts map of the artifacts configuration
+     * 
      * @readonly
      * @memberof Artifacts
-     * @returns {Map<string, ArtifactDefinitionsPerFeature>}
      */
     get artifacts() {
         return this.#artifacts;

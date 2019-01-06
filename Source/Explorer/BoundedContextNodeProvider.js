@@ -6,10 +6,10 @@
 import { ProjectConfiguration } from '../Configuration/ProjectConfiguration';
 import { BoundedContextNode } from './BoundedContextNode';
 import { FeatureNode } from './FeatureNode';
-import { Feature } from '../Configuration/Feature';
+import { FeatureDefinition } from '../Configuration/FeatureDefinition';
 import { BoundedContext } from '../Configuration/BoundedContext';
 import { TreeItemCollapsibleState } from 'vscode';
-import { ArtifactDefinitionsPerFeature } from '../Configuration/ArtifactDefinitionsPerFeature';
+import { ArtifactsByTypeDefinition } from '../Configuration/ArtifactsByTypeDefinition';
 import { ArtifactNode } from './ArtifactNode';
 import { Artifacts } from '../Configuration/Artifacts';
 import { ModuleNode } from './ModuleNode';
@@ -19,7 +19,7 @@ const vscode = require('vscode');
 
 export class BoundedContextNodeProvider {
     #onDidChangeTreeData;
-    #config
+    #config: ProjectConfiguration;
     /**
      *Creates an instance of BoundedContextNodeProvider.
      * @param {ProjectConfiguration} config
@@ -28,6 +28,15 @@ export class BoundedContextNodeProvider {
     constructor(config) {    
         this.#onDidChangeTreeData = new vscode.EventEmitter();
         this.#config = config;
+    }
+    /**
+     * Gets the project configuration
+     *
+     * @readonly
+     * @memberof BoundedContextNodeProvider
+     */
+    get config() {
+        return this.#config;
     }
     /**
      * 
@@ -48,20 +57,20 @@ export class BoundedContextNodeProvider {
     }
 
     /**
+     * Gets the children nodes
      *
-     *
-     * @param {BoundedContextNode | FeatureNode} element
+     * @param {BoundedContextNode | ModuleNode | FeatureNode} element
      * @memberof BoundedContextNodeProvider
      * @returns {Promise<any[]>}
      */
     getChildren(element) {
-        if (this.#config.boundedContexts.length === 0) {
+        if (this.config.boundedContexts.length === 0) {
             vscode.window.showInformationMessage('No bounded contexts in this project');
             return Promise.resolve([]);
         }
         if (element === undefined) {
             let boundedContextNodes = [];
-            this.#config.boundedContexts.forEach( boundedContext => {
+            this.config.boundedContexts.forEach( boundedContext => {
                 boundedContextNodes.push(createBoundedContextNode(boundedContext));
             });
             return Promise.resolve(boundedContextNodes);
@@ -95,12 +104,12 @@ function findNodes(boundedContext) {
     let artifacts = boundedContext.artifacts;
     let nodes = [];
     if (!boundedContext.topology.hasModules()) {
-        boundedContext.topology.features.forEach(feature => {
-            nodes.push(createFeatureNode(feature, artifacts));
+        boundedContext.topology.features.forEach( (featureDefinition, feature) => {
+            nodes.push(createFeatureNode(feature, featureDefinition, artifacts));
         });
     } else {
-        boundedContext.topology.modules.forEach(module => {
-            nodes.push(createModuleNode(module, artifacts));
+        boundedContext.topology.modules.forEach( (moduleDefinition, module) => {
+            nodes.push(createModuleNode(module, moduleDefinition, artifacts));
         });
     }
     return nodes;
@@ -108,31 +117,33 @@ function findNodes(boundedContext) {
 /**
  *
  *
- * @param {ModuleDefinition} module
+ * @param {string} module
+ * @param {ModuleDefinition} moduleDefinition
  * @param {Artifacts} artifacts
  * @returns {ModuleNode}
  */
-function createModuleNode(module, artifacts) {
-    let moduleNode = new ModuleNode(module.name, TreeItemCollapsibleState.Collapsed, module.module);
-    module.features.forEach(feature => {
-        moduleNode.addFeature(createFeatureNode(feature, artifacts));
+function createModuleNode(module, moduleDefinition, artifacts) {
+    let moduleNode = new ModuleNode(moduleDefinition.name, TreeItemCollapsibleState.Collapsed, module);
+    moduleDefinition.features.forEach((featureDefinition, feature) => {
+        moduleNode.addFeature(createFeatureNode(feature, featureDefinition, artifacts));
     });
     return moduleNode;
 }
 /**
  *
  *
- * @param {Feature} feature
+ * @param {string} feature
+ * @param {FeatureDefinition} featureDefinition
  * @param {Artifacts} artifacts
  * @returns {FeatureNode}
  */
-function createFeatureNode(feature, artifacts) {
-    let featureNode = new FeatureNode(feature.name, TreeItemCollapsibleState.Collapsed, feature.feature);
-    buildArtifactNodes(artifacts.artifacts.get(feature.feature)).forEach(artifact => {
+function createFeatureNode(feature, featureDefinition, artifacts) {
+    let featureNode = new FeatureNode(featureDefinition.name, TreeItemCollapsibleState.Collapsed, feature);
+    buildArtifactNodes(artifacts.artifacts.get(feature)).forEach(artifact => {
         featureNode.addArtifact(artifact);
     });
-    feature.subFeatures.forEach(subFeature => {
-        featureNode.addSubFeature(createFeatureNode(subFeature, artifacts));
+    featureDefinition.subFeatures.forEach((subFeatureDefinition, subFeature) => {
+        featureNode.addSubFeature(createFeatureNode(subFeature, subFeatureDefinition, artifacts));
     });
 
     return featureNode;
@@ -140,16 +151,35 @@ function createFeatureNode(feature, artifacts) {
 /**
  *
  *
- * @param {ArtifactDefinitionsPerFeature} artifactsPerFeature
+ * @param {ArtifactsByTypeDefinition} artifactsPerFeature
  * @returns {ArtifactNode[]}
  */
 function buildArtifactNodes(artifactsPerFeature) {
-    let artifacts = new Array (
-        ...artifactsPerFeature.commands.map(artifact => new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, artifact.artifact, 'Command')),
-        ...artifactsPerFeature.events.map(artifact => new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, artifact.artifact, 'Event')),
-        ...artifactsPerFeature.eventSources.map(artifact => new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, artifact.artifact, 'Event Source')),
-        ...artifactsPerFeature.readModels.map(artifact => new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, artifact.artifact, 'Read Model')),
-        ...artifactsPerFeature.queries.map(artifact => new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, artifact.artifact, 'Query')),
-    );
-    return artifacts;
+    let result = [];
+    Object.keys(artifactsPerFeature.commands).forEach( feature => {
+        let artifact = artifactsPerFeature.commands.get(feature);
+        result.push(new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, feature, 'Command'));
+    });
+
+    Object.keys(artifactsPerFeature.events).forEach( feature => {
+        let artifact = artifactsPerFeature.events.get(feature);
+        result.push(new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, feature, 'Event'));
+    });
+
+    Object.keys(artifactsPerFeature.eventSources).forEach( feature => {
+        let artifact = artifactsPerFeature.eventSources.get(feature);
+        result.push(new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, feature, 'Event Source'));
+    });
+
+    Object.keys(artifactsPerFeature.readModels).forEach( feature => {
+        let artifact = artifactsPerFeature.readModels.get(feature);
+        result.push(new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, feature, 'Read Model'));
+    });
+
+    Object.keys(artifactsPerFeature.queries).forEach( feature => {
+        let artifact = artifactsPerFeature.queries.get(feature);
+        result.push(new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, feature, 'Query'));
+    });
+
+    return result;
 }

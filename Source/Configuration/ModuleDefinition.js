@@ -3,66 +3,64 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Feature } from "./Feature";
+import { FeatureDefinition } from "./FeatureDefinition";
+
+/**
+ * Represents the feature id
+ * @typedef {string} Feature
+ */
 
 export class ModuleDefinition {
-    #module;
-    #name;
-    #features;
+    #name: string;
+    #features: Map<Feature, FeatureDefinition>;
     /**
-     *Creates an instance of ArtifactDefinition.
-     * @param {string} module
+     *Creates an instance of ModuleDefinition.
      * @param {string} name
-     * @param {{feature: string, name: string, subFeatures: any[]}[]} features
-     * @memberof ArtifactDefinition
+     * @param {Map<Feature, FeatureDefinition>} features
+     * @memberof ModuleDefinition
      */
-    constructor (module, name, features) {
-        this.#module = module;
+    constructor (name, features) {
         this.#name = name;
-        this.#features = features? features.map(feature => new Feature(feature.feature, feature.name, feature.subFeatures)) : [];
+        let featureMap = new Map();
+        if (features) {
+            Object.keys(features).forEach(feature => {
+                let obj = features[feature];
+                featureMap.set(feature, new FeatureDefinition(obj.name, obj.subFeatures))
+            });
+        }
+        this.#features = featureMap;
         
     }
     /**
-     * 
+     * Gets the name of the module
      *
      * @readonly
      * @memberof ModuleDefinition
-     * @returns {string}
-     */
-    get module() {
-        return this.#module;
-    }
-    /**
-     * 
-     *
-     * @readonly
-     * @memberof ModuleDefinition
-     * @returns {string}
      */
     get name() {
         return this.#name;
     }
     /**
-     *
+     * Gets the map of features
      *
      * @readonly
      * @memberof ModuleDefinition
-     * @returns {Feature[]}
      */
     get features() {
         return this.#features;
     }
     /**
+     * Finds a specific feature
      *
-     *
-     * @param {string} feature The feature id
-     * @returns {Feature}
+     * @param {Feature} feature The feature id
+     * @returns {FeatureDefinition | null}
      * @memberof ModuleDefinition
      */
     findFeature(feature) {
-        for (let featureToSearch of this.features) {
-            let res = featureToSearch.findFeature(feature); 
-            if (res !== null) return res;
+        if (this.features.has(feature)) return this.features.get(feature);
+        for (let [featureId, featureObj] of this.features) {
+            let res = featureObj.findFeature(feature); 
+            if (res) return res;
         }
         return null;
     }

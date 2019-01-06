@@ -4,13 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {TreeItem, TreeItemCollapsibleState} from 'vscode';
-import { ArtifactDefinitionsPerFeature } from '../Configuration/ArtifactDefinitionsPerFeature';
-import { Feature } from '../Configuration/Feature';
+import { ArtifactsByTypeDefinition } from '../Configuration/ArtifactsByTypeDefinition';
+import { FeatureDefinition } from '../Configuration/FeatureDefinition';
 import { ArtifactNode } from './ArtifactNode';
 
 export class FeatureNode extends TreeItem {
-    #subFeatures
-    #artifacts;
+    #subFeatures: FeatureNode[];
+    #artifacts: ArtifactNode[];
     /**
      *Creates an instance of FeatureNode.
      * @param {string} label
@@ -21,15 +21,40 @@ export class FeatureNode extends TreeItem {
      */
     constructor (label, collapsibleState, featureId) {
         super(`${label} - Feature`, collapsibleState);
+        super.tooltip = `Feature id: '${featureId}'`;
+        
         this.#subFeatures = [];
         this.#artifacts = [];
-        super.tooltip = `Feature id: '${featureId}'`;
-    }
-    get children() {
-        return this.#subFeatures.concat(this.#artifacts);
     }
     /**
-     * 
+     * Gets the subfeatures
+     *
+     * @readonly
+     * @memberof FeatureNode
+     */
+    get subFeatures() {
+        return this.#subFeatures;
+    }
+    /**
+     * Gets the artifacts
+     *
+     * @readonly
+     * @memberof FeatureNode
+     */
+    get artifacts() {
+        return this.#artifacts;
+    }
+    /**
+     * Get the children nodes
+     *
+     * @readonly
+     * @memberof FeatureNode
+     */
+    get children() {
+        return this.subFeatures.concat(this.artifacts);
+    }
+    /**
+     * Adds a subfeature
      *
      * @param {FeatureNode} feature
      * @memberof FeatureNode
@@ -39,7 +64,7 @@ export class FeatureNode extends TreeItem {
     }
 
     /**
-     * 
+     * Adds an artifact
      *
      * @param {ArtifactNode} artifact
      * @memberof FeatureNode

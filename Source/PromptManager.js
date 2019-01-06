@@ -2,16 +2,16 @@
  *  Copyright (c) Dolittle. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {DependencyManager} from '@dolittle/tooling.common';
+import {DependenciesManager} from '@dolittle/tooling.common';
 
 const vscode = require('vscode');
 
 export class PromptManager {
-    #dependencyManager;
+    #dependencyManager: DependenciesManager;
     #logger;
     /**
      * Initializes a new instance of {PromptManager}
-     * @param {DependencyManager} dependencyManager
+     * @param {DependenciesManager} dependencyManager
      * @param {Logger} logger
      */
     constructor(dependencyManager, logger) {
@@ -20,6 +20,7 @@ export class PromptManager {
         
     }
     /**
+     * Generates the context based on the dependencies
      * @param {Dependency[]} dependencies
      * @param {string} language
      * @param {string} location
@@ -27,9 +28,10 @@ export class PromptManager {
      */
     async generateContext(dependencies, language, location) {
         let context = {};
-        dependencies.forEach(async dep => {
+        for (let dep of dependencies) {
             context[dep.name] = await this.handleDependency(dep, language, location);
-        });
+        }
+        
         return context;
     }
     /**

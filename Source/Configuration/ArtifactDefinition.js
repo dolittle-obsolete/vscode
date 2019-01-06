@@ -4,28 +4,40 @@
  *--------------------------------------------------------------------------------------------*/
 
 export class ArtifactDefinition {
-    #artifact;
-    #generation;
-    #type;
+    #generation: number;
+    #type: string;
+    #name: string;
+    #area: string;
     /**
-     *Creates an instance of ArtifactDefinition.
-     * @param {string} artifact
+     * Creates an instance of {ArtifactDefinition}.
      * @param {number} generation
      * @param {string} type
      * @memberof ArtifactDefinition
      */
-    constructor (artifact, generation, type) {
-        this.#artifact = artifact;
+    constructor (generation, type) {
         this.#generation = generation;
         this.#type = type;
         
+        let splittedType = type.split(',');
+        this.#name = splittedType[0].split('.').pop();
+        this.#area = splittedType[1].trim();
+        
     }
-    get artifact() {
-        return this.#artifact;
-    }
+    /**
+     * Gets the generation
+     *
+     * @readonly
+     * @memberof ArtifactDefinition
+     */
     get generation() {
         return this.#generation;
     }
+    /**
+     * Gets the type string
+     *
+     * @readonly
+     * @memberof ArtifactDefinition
+     */
     get type() {
         return this.#type;
     }
@@ -36,7 +48,7 @@ export class ArtifactDefinition {
      * @memberof ArtifactDefinition
      */
     get name() {
-        return this.#type.split(',')[0].split('.').pop();
+        return this.#name;
     }
     /**
      * Gets the artifact area
@@ -45,6 +57,6 @@ export class ArtifactDefinition {
      * @memberof ArtifactDefinition
      */
     get area() {
-        return this.#type.split(',')[1].trim();
+        return this.#area;
     }
 }
