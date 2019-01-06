@@ -13,13 +13,12 @@ const dolittleOutputChannelName = 'Dolittle';
 const dolittleProjectOutputChannelName = 'Dolittle Project';
 class globals {
     #projectConfiguration: ProjectConfiguration;
-    #dolittleOutputChannel: import('vscode').OutputChannel;
-    #dolittleProjectOutputChannel: import('vscode').OutputChannel;
+    #dolittleOutputChannel;
+    #dolittleProjectOutputChannel;
     #commonToolingManager: CommonToolingManager;
     #promptManager: PromptManager;
 
     constructor() {
-        
         this.#projectConfiguration = null;
         this.#dolittleOutputChannel = vscode.window.createOutputChannel(dolittleOutputChannelName);
         this.#dolittleProjectOutputChannel = vscode.window.createOutputChannel(dolittleProjectOutputChannelName);

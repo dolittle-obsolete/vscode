@@ -15,7 +15,7 @@ export class CommonToolingManager {
     #artifactsManager: ArtifactsManager;
     #dependenciesManager: DependenciesManager;
     #promptManager: PromptManager;
-    #logger: import('winston').Logger;
+    #logger;
 
     constructor(boilerPlatesManager, applicationsManager, boundedContextsManager, artifactsManager, dependenciesManager, promptManager, logger) {
         this.#boilerPlatesManager = boilerPlatesManager;

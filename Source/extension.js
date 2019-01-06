@@ -32,7 +32,6 @@ function activate(context) {
         
     });
 }
-globals.commonToolingManager.
 function ensureProjectConfiguration(refresh) {
     if (globals.projectConfiguration === null || refresh === true) {
         globals.dolittleProjectOutputChannel.appendLine('Attempting to load dolittle project');
