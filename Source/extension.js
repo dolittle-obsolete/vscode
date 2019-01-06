@@ -5,6 +5,7 @@
 
 import globals from "./globals";
 import { BoundedContextNodeProvider } from "./Explorer/BoundedContextNodeProvider";
+import { getDirectoryPath } from "./helpers";
 
 const vscode = require('vscode');
 const project = require('./Project/Project');
@@ -217,10 +218,7 @@ function registerDolittleArtifactsCommands(context) {
                     break;
             }
 
-            const artifactName = await vscode.window.showInputBox({prompt: 'Artifact name: ', ignoreFocusOut: true});
-            let commandArgs = [artifactName];
-
-            // runDolittleCliCommandThroughIntegratedTerminal(command, commandArgs, {cwd: path.dirname(editor.document.uri.fsPath)})
+            globals.commonToolingManager.addArtifact(artifactType, 'csharp', getDirectoryPath(editor.document.uri.fsPath));
         } catch (error) {
             globals.dolittleProjectOutputChannel.appendLine(`Could not add artifact.\nError: ${error}`);
             vscode.window.showErrorMessage('Could add artifact ', error);
