@@ -33,10 +33,11 @@ class globals {
 
         this.#boundedContextNodeProvider = new BoundedContextNodeProvider();
 
-        this.#configurationLoaded.event(vscode.commands.executeCommand('dolittle.featuresView.reloadView'));
 
     }
-
+    get onConfigurationLoaded() {
+        return this.#configurationLoaded.event;
+    }
     /**
      *
      *

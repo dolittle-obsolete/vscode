@@ -6,6 +6,7 @@
 import globals from "./globals";
 import { BoundedContextNodeProvider } from "./Explorer/BoundedContextNodeProvider";
 import { getDirectoryPath } from "./helpers";
+import { ArtifactNode } from "./Explorer/ArtifactNode";
 
 const vscode = require('vscode');
 const project = require('./Project/Project');
@@ -38,6 +39,7 @@ function ensureProjectConfiguration(refresh) {
  * @param {() => void} todo
  */
 function executeInContext(todo) {
+    vscode.window.
     return ensureProjectConfiguration()
         .then(
             success => todo(),
@@ -49,6 +51,8 @@ function executeInContext(todo) {
 }
 
 function registerViews(context) {
+    globals.onConfigurationLoaded(vscode.commands.executeCommand('dolittle.featuresView.reloadView'));
+    vscode.workspace.file
     vscode.window.registerTreeDataProvider('featuresView', globals.boundedContextNodeProvider);
     vscode.commands.registerCommand('dolittle.featuresView.reloadView', async () => {
         await ensureProjectConfiguration(true)
@@ -59,14 +63,12 @@ function registerViews(context) {
             error => vscode.window.showErrorMessage(`Failed to load dolittle projects.\nError: ${error}`)
         );
     });
-    vscode.commands.registerCommand('dolittle.featuresView.editArtifact', (...args) => {
+    vscode.commands.registerCommand('dolittle.featuresView.editArtifact', (artifactItem: ArtifactNode) => {
         console.log('Edit artifact: ')
-        console.log(args);
     });
 
-    vscode.commands.registerCommand('dolittle.featuresView.deleteArtifact', (...args) => {
+    vscode.commands.registerCommand('dolittle.featuresView.deleteArtifact', (artifactItem: ArtifactNode) => {
         console.log('Delete artifact: ')
-        console.log(args);
     });
 }
 
