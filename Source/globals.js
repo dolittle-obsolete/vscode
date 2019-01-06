@@ -8,6 +8,7 @@ import { loadProjectConfiguration, ProjectConfiguration } from './Configuration/
 import { CommonToolingManager } from './CommonToolingManager';
 import { PromptManager } from './PromptManager';
 import { EventEmitter } from 'vscode';
+import { BoundedContextNodeProvider } from './Explorer/BoundedContextNodeProvider';
 
 const vscode = require('vscode');
 const dolittleOutputChannelName = 'Dolittle';
@@ -18,6 +19,7 @@ class globals {
     #dolittleProjectOutputChannel;
     #commonToolingManager: CommonToolingManager;
     #promptManager: PromptManager;
+    #boundedContextNodeProvider: BoundedContextNodeProvider;
 
     #configurationLoaded: EventEmitter;
 
@@ -29,7 +31,9 @@ class globals {
         this.#commonToolingManager = new CommonToolingManager(boilerPlatesManager, applicationsManager, boundedContextsManager, artifactsManager, dependenciesManager, this.#promptManager, logger);
         this.#configurationLoaded = new vscode.EventEmitter();
 
-        this.#configurationLoaded.event(vscode.commands.executeCommand('dolittle.view.loadView'));
+        this.#boundedContextNodeProvider = new BoundedContextNodeProvider();
+
+        this.#configurationLoaded.event(vscode.commands.executeCommand('dolittle.featuresView.reloadView'));
 
     }
 
@@ -77,6 +81,15 @@ class globals {
      */
     get commonToolingManager() {
         return this.#commonToolingManager;
+    }
+    /**
+     * 
+     *
+     * @readonly
+     * @memberof globals
+     */
+    get boundedContextNodeProvider() {
+        return this.#boundedContextNodeProvider;
     }
     /**
      *

@@ -22,6 +22,7 @@ export class FeatureNode extends TreeItem {
     constructor (label, collapsibleState, featureId) {
         super(`${label} - Feature`, collapsibleState);
         super.tooltip = `Feature id: '${featureId}'`;
+        super.contextValue = 'feature';
         
         this.#subFeatures = [];
         this.#artifacts = [];

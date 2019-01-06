@@ -18,6 +18,7 @@ export class ModuleNode extends TreeItem {
     constructor (label, collapsibleState, moduleId) {
         super(`${label} - Module`, collapsibleState);
         super.tooltip = `Module id: '${moduleId}'`;
+        super.contextValue = 'module';
         this.#features = [];
     }
     /**

@@ -19,6 +19,7 @@ export class ArtifactNode extends TreeItem {
     constructor (label, collapsibleState, id, artifactType) {
         super(`${label} - ${artifactType}`, collapsibleState);
         super.tooltip = `Artifact id: '${id}'`;
+        super.contextValue = 'artifact';
         // super.iconPath = Set icon  
         this.#artifactType = artifactType;
         this.#id = id;
@@ -43,5 +44,7 @@ export class ArtifactNode extends TreeItem {
     get id() {
         return this.#id;
     }
+
+    //TODO: Add functionality to edit and delete artifacts here that deletes / edits the actual entry from the configuration
     
 }

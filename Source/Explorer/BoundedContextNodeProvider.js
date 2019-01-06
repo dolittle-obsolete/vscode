@@ -14,29 +14,18 @@ import { ArtifactNode } from './ArtifactNode';
 import { Artifacts } from '../Configuration/Artifacts';
 import { ModuleNode } from './ModuleNode';
 import { ModuleDefinition } from '../Configuration/ModuleDefinition';
+import globals from '../globals';
 
 const vscode = require('vscode');
 
 export class BoundedContextNodeProvider {
     #onDidChangeTreeData;
-    #config: ProjectConfiguration;
     /**
      *Creates an instance of BoundedContextNodeProvider.
-     * @param {ProjectConfiguration} config
      * @memberof BoundedContextNodeProvider
      */
-    constructor(config) {    
+    constructor() {    
         this.#onDidChangeTreeData = new vscode.EventEmitter();
-        this.#config = config;
-    }
-    /**
-     * Gets the project configuration
-     *
-     * @readonly
-     * @memberof BoundedContextNodeProvider
-     */
-    get config() {
-        return this.#config;
     }
     /**
      * 
@@ -64,13 +53,15 @@ export class BoundedContextNodeProvider {
      * @returns {Promise<any[]>}
      */
     getChildren(element) {
-        if (this.config.boundedContexts.length === 0) {
+        let config = globals.projectConfiguration;
+        if (config.boundedContexts.length === 0) {
             vscode.window.showInformationMessage('No bounded contexts in this project');
+            globals.dolittleOutputChannel.appendLine('No bounded contexts found - could not load features view')
             return Promise.resolve([]);
         }
         if (element === undefined) {
             let boundedContextNodes = [];
-            this.config.boundedContexts.forEach( boundedContext => {
+            config.boundedContexts.forEach( boundedContext => {
                 boundedContextNodes.push(createBoundedContextNode(boundedContext));
             });
             return Promise.resolve(boundedContextNodes);

@@ -20,18 +20,10 @@ function activate(context) {
     process.addListener('uncaughtException', (error) => {
         console.error('Uncaught exception', error);
     });
+    registerViews(context);
     registerDolittleProjectCommands(context);
     registerDolittleArtifactsCommands(context);
-    vscode.commands.registerCommand('dolittle.view.loadView', async () => {
-        await ensureProjectConfiguration(true)
-        .then(
-            success => {
-                vscode.window.createTreeView('features', {treeDataProvider: new BoundedContextNodeProvider(globals.projectConfiguration)});
-            },
-            error => vscode.window.showErrorMessage(`Failed to load dolittle projects.\nError: ${error}`)
-        );
-        
-    });
+    
 }
 function ensureProjectConfiguration(refresh) {
     if (globals.projectConfiguration === null || refresh === true) {
@@ -54,6 +46,28 @@ function executeInContext(todo) {
                 throw error;
             }
         );
+}
+
+function registerViews(context) {
+    vscode.window.registerTreeDataProvider('featuresView', globals.boundedContextNodeProvider);
+    vscode.commands.registerCommand('dolittle.featuresView.reloadView', async () => {
+        await ensureProjectConfiguration(true)
+        .then(
+            success => {
+                globals.boundedContextNodeProvider.refresh();
+            },
+            error => vscode.window.showErrorMessage(`Failed to load dolittle projects.\nError: ${error}`)
+        );
+    });
+    vscode.commands.registerCommand('dolittle.featuresView.editArtifact', (...args) => {
+        console.log('Edit artifact: ')
+        console.log(args);
+    });
+
+    vscode.commands.registerCommand('dolittle.featuresView.deleteArtifact', (...args) => {
+        console.log('Delete artifact: ')
+        console.log(args);
+    });
 }
 
 function registerDolittleProjectCommands(context) {

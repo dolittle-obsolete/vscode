@@ -25,20 +25,20 @@
         "viewsContainers": {
             "activitybar": [
                 {
-                    "id": "dolittle",
+                    "id": "dolittleActivityBar",
                     "title": "Dolittle",
                     "icon": "Resources/dolittle_symbol.svg"
                 }
             ]
         },
         "views": {
-            "dolittle": [
+            "dolittleActivityBar": [
                 {
-                    "id": "features",
+                    "id": "featuresView",
                     "name": "Features"
                 },
                 {
-                    "id": "eventStore",
+                    "id": "eventStoreView",
                     "name": "Event Store"
                 }
             ]
@@ -105,16 +105,40 @@
                 "title": "Add"
             },
             {
-                "command": "dolittle.view.loadView",
+                "command": "dolittle.featuresView.reloadView",
                 "category": "Dolittle View",
-                "title": "Load"
+                "title": "Reload View"
             },
             {
-                "command": "dolittle.start",
-                "category": "Dolittle Setup",
-                "title": "Start"
+                "command": "dolittle.featuresView.editArtifact",
+                "category": "Dolittle View",
+                "title": "Edit"
+            },
+            {
+                "command": "dolittle.featuresView.deleteArtifact",
+                "category": "Dolittle View",
+                "title": "Delete"
             }
-        ]
+        ],
+        "menus": {
+            "view/title": [
+                {
+                    "command": "dolittle.featuresView.reloadView",
+                    "when": "view == featuresView",
+                    "group": "navigation"
+                }
+            ],
+            "view/item/context": [
+                {
+                    "command": "dolittle.featuresView.editArtifact",
+                    "when": "view == featuresView && viewItem == artifact"
+                },
+                {
+                    "command": "dolittle.featuresView.deleteArtifact",
+                    "when": "view == featuresView && viewItem == artifact"
+                }
+            ]
+        }
     },
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install",

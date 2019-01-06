@@ -21,6 +21,7 @@ export class BoundedContextNode extends TreeItem {
     constructor (label, collapsibleState, id) {
         super(`${label} - Bounded Context`, collapsibleState);
         super.tooltip = `id: '${id}'`;
+        super.contextValue = 'boundedContext';
         
         this.#id = id;
         this.#childNodes = [];
