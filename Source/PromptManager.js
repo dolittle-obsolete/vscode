@@ -28,7 +28,7 @@ export class PromptManager {
     async generateContext(dependencies, language, location) {
         let context = {};
         dependencies.forEach(async dep => {
-            context[dep.name] = await this.#handleDependency(dep, language, location);
+            context[dep.name] = await this.handleDependency(dep, language, location);
         });
         return context;
     }
@@ -40,12 +40,15 @@ export class PromptManager {
      * @param {string} location
      * @returns {Promise<any>}
      */
-    async #handleDependency(dependency, language, location) {
+    async handleDependency(dependency, language, location) {
+        let val = {};
         switch (dependency.type) {
             case 'userInput':
-                return await this.#handleUserInput(dependency);
+                val = await this.handleUserInput(dependency);
+                return val;
             case 'discover':
-                return await this.#handleDiscover(dependency, language, location);
+                val = await this.handleDiscover(dependency, language, location);
+                return val;
             default:
                 throw new Error(`Invalided type '${dependency.type}'`);
         }
@@ -56,25 +59,25 @@ export class PromptManager {
      * @param {any[]} choices
      * @returns {Promise<any>} 
      */
-    async #handleUserInput(dependency, choices = []) {
+    async handleUserInput(dependency, choices = []) {
         const inputType = dependency.userInputType;
         let response = {}
         if (inputType === 'input' || inputType === 'argument') {
-            response = await this.#getResponseFromTextInput(dependency.promptMessage || 'Input');
+            response = await this.getResponseFromTextInput(dependency.promptMessage || 'Input');
         }
         else if (inputType === 'chooseOne') {
             let items = dependency.choices !== undefined? 
                 dependency.choices.concat(choices)
                 : choices;
             if (dependency.customInput !== undefined) items.push(dependency.customInput);
-            response = await this.#getResponseFromChoice(items, dependency.promptMessage || 'Input');
-            if (dependency.customInput !== undefined && response === dependency.customInput) response = await this.#getResponseFromTextInput(dependency.customInput);
+            response = await this.getResponseFromChoice(items, dependency.promptMessage || 'Input');
+            if (dependency.customInput !== undefined && response === dependency.customInput) response = await this.getResponseFromTextInput(dependency.customInput);
         }
         else if (inputType === 'chooseMultiple') {
             let items = dependency.choices !== undefined? 
                 dependency.choices.concat(choices)
                 : choices;
-            response = await this.#getResponseFromMultipleChoice(items, dependency.promptMessage || 'Input');
+            response = await this.getResponseFromMultipleChoice(items, dependency.promptMessage || 'Input');
         }
         else {
             throw new Error(`Invalid userInputType '${inputType}'`)
@@ -90,7 +93,7 @@ export class PromptManager {
      * @param {string} location
      * @returns {Promise<any>}
      */
-    async #handleDiscover(dependency, language, location) {
+    async handleDiscover(dependency, language, location) {
         /**
          * @type {any}
          */
@@ -108,7 +111,7 @@ export class PromptManager {
                                 label: item.value 
                             })) 
                         : discoveryResult;
-            return await this.#handleUserInput(dependency, choices)
+            return await this.handleUserInput(dependency, choices)
         }
         return discoveryResult;
     }
@@ -117,7 +120,7 @@ export class PromptManager {
      * @param {string} promptMessage
      * @returns {Promise<string>}
      */
-    async #getResponseFromTextInput(promptMessage) {
+    async getResponseFromTextInput(promptMessage) {
         return await vscode.window.showInputBox({prompt: promptMessage, ignoreFocusOut: true});
     }
 
@@ -127,7 +130,7 @@ export class PromptManager {
      * @param {string} promptMessage
      * @returns {Promise<any>} 
      */
-    async #getResponseFromChoice(choices, promptMessage) {
+    async getResponseFromChoice(choices, promptMessage) {
         return await vscode.window.showQuickPick(choices, {canPickMany: false, ignoreFocusOut: true, placeHolder: promptMessage})
     }
     /**
@@ -136,7 +139,7 @@ export class PromptManager {
      * @param {string} promptMessage
      * @returns {Promise<any[]>} 
      */
-    async #getResponseFromMultipleChoice(choices, promptMessage) {
+    async getResponseFromMultipleChoice(choices, promptMessage) {
         return await vscode.window.showQuickPick(choices, {canPickMany: true, ignoreFocusOut: true, placeHolder: promptMessage })
     }
 }

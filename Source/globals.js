@@ -8,6 +8,7 @@ import { loadProjectConfiguration, ProjectConfiguration } from './Configuration/
 import { CommonToolingManager } from './CommonToolingManager';
 import { PromptManager } from './PromptManager';
 
+const vscode = require('vscode');
 const dolittleOutputChannelName = 'Dolittle';
 const dolittleProjectOutputChannelName = 'Dolittle Project';
 
@@ -20,8 +21,8 @@ class globals {
 
     constructor() {
         this.#projectConfiguration = null;
-        this.#dolittleOutputChannel = this.vscode.window.createOutputChannel(dolittleOutputChannelName);
-        this.#dolittleProjectOutputChannel = this.vscode.window.createOutputChannel(dolittleProjectOutputChannelName);
+        this.#dolittleOutputChannel = vscode.window.createOutputChannel(dolittleOutputChannelName);
+        this.#dolittleProjectOutputChannel = vscode.window.createOutputChannel(dolittleProjectOutputChannelName);
         this.#promptManager = new PromptManager(dependenciesManager, logger);
         this.#commonToolingManager = new CommonToolingManager(boilerPlatesManager, applicationsManager, boundedContextsManager, artifactsManager, dependenciesManager, this.#promptManager, logger);
     }
