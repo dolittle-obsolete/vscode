@@ -118,7 +118,7 @@
     },
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install",
-        "build": "rm -rf bin && npx babel Source --ignore **/for_* -d bin",
+        "build": "rm -rf bin && npx babel Source --ignore **/for_* -d bin --source-maps inline",
         "prepublish": "yarn build"
     },
     "devDependencies": {
