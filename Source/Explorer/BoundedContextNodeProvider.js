@@ -156,28 +156,23 @@ function createFeatureNode(feature, featureDefinition, artifacts) {
  */
 function buildArtifactNodes(artifactsPerFeature) {
     let result = [];
-    Object.keys(artifactsPerFeature.commands).forEach( feature => {
-        let artifact = artifactsPerFeature.commands.get(feature);
+    artifactsPerFeature.commands.forEach( (artifact, feature) => {
         result.push(new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, feature, 'Command'));
     });
 
-    Object.keys(artifactsPerFeature.events).forEach( feature => {
-        let artifact = artifactsPerFeature.events.get(feature);
+    artifactsPerFeature.events.forEach( (artifact, feature) => {
         result.push(new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, feature, 'Event'));
     });
 
-    Object.keys(artifactsPerFeature.eventSources).forEach( feature => {
-        let artifact = artifactsPerFeature.eventSources.get(feature);
+    artifactsPerFeature.eventSources.forEach( (artifact, feature) => {
         result.push(new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, feature, 'Event Source'));
     });
 
-    Object.keys(artifactsPerFeature.readModels).forEach( feature => {
-        let artifact = artifactsPerFeature.readModels.get(feature);
+    artifactsPerFeature.readModels.forEach( (artifact, feature) => {
         result.push(new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, feature, 'Read Model'));
     });
 
-    Object.keys(artifactsPerFeature.queries).forEach( feature => {
-        let artifact = artifactsPerFeature.queries.get(feature);
+    artifactsPerFeature.queries.forEach( (artifact, feature) => {
         result.push(new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, feature, 'Query'));
     });
 

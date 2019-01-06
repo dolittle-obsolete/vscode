@@ -49,7 +49,7 @@ export class Topology {
         }
         if (features) {
             Object.keys(features).forEach( feature => {
-                let obj = features[module];
+                let obj = features[feature];
                 featuresMap.set(feature, new FeatureDefinition(obj.name, obj.subFeatures));
             });
         }

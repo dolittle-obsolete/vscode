@@ -7,6 +7,7 @@ import {boilerPlatesManager, applicationsManager, boundedContextsManager, artifa
 import { loadProjectConfiguration, ProjectConfiguration } from './Configuration/ProjectConfiguration';
 import { CommonToolingManager } from './CommonToolingManager';
 import { PromptManager } from './PromptManager';
+import { EventEmitter } from 'vscode';
 
 const vscode = require('vscode');
 const dolittleOutputChannelName = 'Dolittle';
@@ -18,13 +19,20 @@ class globals {
     #commonToolingManager: CommonToolingManager;
     #promptManager: PromptManager;
 
+    #configurationLoaded: EventEmitter;
+
     constructor() {
         this.#projectConfiguration = null;
         this.#dolittleOutputChannel = vscode.window.createOutputChannel(dolittleOutputChannelName);
         this.#dolittleProjectOutputChannel = vscode.window.createOutputChannel(dolittleProjectOutputChannelName);
         this.#promptManager = new PromptManager(dependenciesManager, logger);
         this.#commonToolingManager = new CommonToolingManager(boilerPlatesManager, applicationsManager, boundedContextsManager, artifactsManager, dependenciesManager, this.#promptManager, logger);
+        this.#configurationLoaded = new vscode.EventEmitter();
+
+        this.#configurationLoaded.event(vscode.commands.executeCommand('dolittle.view.loadView'));
+
     }
+
     /**
      *
      *
@@ -79,6 +87,7 @@ class globals {
         let config = await loadProjectConfiguration();
         if (config === undefined) throw new Error('Project configuration was undefined');
         this.#projectConfiguration = config;
+        this.#configurationLoaded.fire();
         
     }
 }
