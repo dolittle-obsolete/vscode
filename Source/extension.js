@@ -5,11 +5,8 @@
 
 import globals from "./globals";
 import { BoundedContextNodeProvider } from "./Explorer/BoundedContextNodeProvider";
-// import { createBoundedContext, createApplication } from "./dolittle-common";
-const tooling = require('@dolittle/tooling.common/');
 
-
-const vscode = globals.vscode;
+const vscode = require('vscode');
 const project = require('./Project/Project');
 
 /**
@@ -43,7 +40,7 @@ function ensureProjectConfiguration(refresh) {
     else return Promise.resolve();
 }
 /**
- * Executes a function that needs to be ran in a project configuration context
+ * Executes a function that needs to be executed in a project configuration context
  *
  * @param {() => void} todo
  */
@@ -151,8 +148,8 @@ function registerDolittleProjectCommands(context) {
     
     vscode.commands.registerCommand('dolittle.project.createApplication', async () => {
         try {
-            // await createApplication();
-           globals.dolittleOutputChannel.appendLine('Created application');
+            await globals.commonToolingManager.createApplication();
+            globals.dolittleOutputChannel.appendLine('Created application');
         } catch(err) {
             globals.dolittleProjectOutputChannel.appendLine(`Could not create application.\nError: ${err}`);
             vscode.window.showErrorMessage('Could not create application');
@@ -160,7 +157,7 @@ function registerDolittleProjectCommands(context) {
     });
     vscode.commands.registerCommand('dolittle.project.createBoundedContext', async () => {
         try {
-            //  await createBoundedContext('csharp');
+            await globals.commonToolingManager.createBoundedContext('csharp');
             globals.dolittleOutputChannel.appendLine('Created bounded context');
         } catch(err) {
             globals.dolittleProjectOutputChannel.appendLine(`Could not create bounded context.\nError: ${err}`);
@@ -170,7 +167,6 @@ function registerDolittleProjectCommands(context) {
 }
 
 function registerDolittleArtifactsCommands(context) {
-    const path = require('path');
     const artifacts = [
         'Command',
         'Event',
@@ -184,46 +180,47 @@ function registerDolittleArtifactsCommands(context) {
     vscode.commands.registerTextEditorCommand('dolittle.artifacts.addArtifact', async (editor) => {
         try {
             const pick = await vscode.window.showQuickPick(artifacts, {canPickMany: false, ignoreFocusOut: true});
-            // let command = ['add'];
-            // switch (pick) {
-            //     case 'Command':
-            //         command.push('command');
-            //         break;
-            //     case 'Event':
-            //         command.push('event');
-            //         break;
-            //     case 'Read Model':
-            //         command.push('readmodel');
-            //         break;
-            //     case 'Aggregate Root':
-            //         command.push('aggregateroot');
-            //         break;
-            //     case 'Command Handler':
-            //         command.push('commandhandler');
-            //         break;
-            //     case 'Query':
-            //         const queryPick = await vscode.window.showQuickPick(['Query', 'Query For a Read Model'], {canPickMany: false, ignoreFocusOut: true});
-            //         if (queryPick === 'Query') command.push('query');
-            //         else command.push('queryfor');
-            //         break;
-            //     case 'Event Processor':
-            //         command.push('eventprocessor');
-            //         break;
-            //     case 'Concept':
-            //         const conceptPick = await vscode.window.showQuickPick(
-            //             ['Concept', 'Int Concept', 'String Concept', 'GUID Concept'],
-            //             {canPickMany: false, ignoreFocusOut: true}
-            //         );
-            //         if (conceptPick === 'Concept') command.push('concept');
-            //         else if (conceptPick === 'Int Concept') command.push('intconcept');
-            //         else if (conceptPick === 'String Concept') command.push('stringconcept');
-            //         else if (conceptPick === 'GUID Concept') command.push('guidconcept');
-            //         break;
-            // }
+            let artifactType = '';
+            switch (pick) {
+                case 'Command':
+                    artifactType = 'command';
+                    break;
+                case 'Event':
+                    artifactType = 'event';
+                    break;
+                case 'Read Model':
+                    artifactType = 'readModel';
+                    break;
+                case 'Aggregate Root':
+                    artifactType = 'aggregateRoot';
+                    break;
+                case 'Command Handler':
+                    artifactType = 'commandHandler';
+                    break;
+                case 'Query':
+                    const queryPick = await vscode.window.showQuickPick(['Query', 'Query For a Read Model'], {canPickMany: false, ignoreFocusOut: true});
+                    if (queryPick === 'Query') artifactType = 'query';
+                    else artifactType = 'queryFor';
+                    break;
+                case 'Event Processor':
+                    artifactType = 'eventProcessor';
+                    break;
+                case 'Concept':
+                    const conceptPick = await vscode.window.showQuickPick(
+                        ['Concept', 'Int Concept', 'String Concept', 'GUID Concept'],
+                        {canPickMany: false, ignoreFocusOut: true}
+                    );
+                    if (conceptPick === 'Concept') command.push('concept');
+                    else if (conceptPick === 'Int Concept') artifactType = 'conceptAsInt';
+                    else if (conceptPick === 'String Concept') artifactType = 'conceptAsString';
+                    else if (conceptPick === 'GUID Concept') artifactType = 'conceptAsGuid';
+                    break;
+            }
 
-            // const artifactName = await vscode.window.showInputBox({prompt: 'Artifact name: ', ignoreFocusOut: true});
-            // let commandArgs = [artifactName];
-            // runDolittleCliCommandThroughIntegratedTerminal(command, commandArgs, {cwd: path.dirname(editor.document.uri.fsPath)})
+            const artifactName = await vscode.window.showInputBox({prompt: 'Artifact name: ', ignoreFocusOut: true});
+            let commandArgs = [artifactName];
+            
+            runDolittleCliCommandThroughIntegratedTerminal(command, commandArgs, {cwd: path.dirname(editor.document.uri.fsPath)})
         } catch (error) {
             globals.dolittleProjectOutputChannel.appendLine(`Could not add artifact.\nError: ${error}`);
             vscode.window.showErrorMessage('Could add artifact ', error);

@@ -40,12 +40,20 @@ export class CommonToolingManager {
      * @memberof CommonToolingManager
      */
     async createBoundedContext(language = 'csharp', destinationFolder = vscode.workspace.workspaceFolders[0].uri.fsPath) {
+        if (!this.#applicationsManager.hasApplication(destinationFolder)) throw new Error('Could not create bounded context - application configuration not found');
         let dependencies = this.#boundedContextsManager.getDependencies(language);
         let context = await this.#promptManager.generateContext(dependencies, language, destinationFolder);
         if (! this.#boundedContextsManager.createBoundedContext(context, language, destinationFolder)) {
             throw new Error('Failed to create bounded context');
         }
 
+    }
+    async addArtifact(artifactType, language = 'csharp', destinationFolder = vscode.workspace.workspaceFolders[0].uri.fspath) {
+        let artifactTemplate = this.#artifactsManager.getArtifactTemplate(language, artifactType);
+        if (!artifactTemplate) throw new Error(`Failed to add artifact - artifact template for artifact type '${artifactType}' and language '${language}' could not be found`);
+        let dependencies = this.artifactsManager.getDependencies(artifactType, language);
+        let context = await this.#promptManager.generateContext(dependencies, language, destinationFolder);
+        this.#artifactsManager.createArtifact(context, language, artifactTemplate, destinationFolder);
     }
     /**
      * Updates the boilerplates
@@ -56,7 +64,6 @@ export class CommonToolingManager {
     async updateBoilerPlates() {
         return this.#boilerPlatesManager.update();
     }
-    
 }
 
     
