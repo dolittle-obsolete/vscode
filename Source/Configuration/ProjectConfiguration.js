@@ -3,8 +3,8 @@
 *  Licensed under the MIT License. See LICENSE in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { BoundedContextConfiguration, loadBoundedContextConfigurations } from "./BoundedContextConfiguration";
-import { loadApplicationConfiguration, ApplicationConfiguration } from "./ApplicationConfiguration";
+import { BoundedContext, loadBoundedContextConfigurations } from "./BoundedContext";
+import { loadApplicationConfiguration, Application } from "./Application";
 
 /**
  * Loads the project configuration
@@ -18,36 +18,35 @@ export async function loadProjectConfiguration() {
     
 }
 
-const _application = new WeakMap();
-const _boundedContexts = new WeakMap();
 export class ProjectConfiguration {
-    
+    #application;
+    #boundedContexts;
     /**
      *Creates an instance of ProjectConfiguration.
-     * @param {ApplicationConfiguration} application
-     * @param {BoundedContextConfiguration[]} boundedContexts
+     * @param {Application} application
+     * @param {BoundedContext[]} boundedContexts
      * @memberof ProjectConfiguration
      */
     constructor(application, boundedContexts) {
-        _application.set(this, application);
-        _boundedContexts.set(this, boundedContexts);
+        this.#application = application;
+        this.#boundedContexts = boundedContexts;
     }
     /**
      * Gets the application configuration for this project
      * @readonly
      * @memberof ProjectConfiguration
-     * @returns {ApplicationConfiguration}
+     * @returns {Application}
      */
     get application() {
-        return _application.get(this);
+        return this.#application;
     }
     /**
      * Gets the bounded contexts of this project
-     * @returns {BoundedContextConfiguration[]}
+     * @returns {BoundedContext[]}
      * @readonly
      * @memberof ProjectConfiguration
      */
     get boundedContexts() {
-        return _boundedContexts.get(this);
+        return this.#boundedContexts;
     }
 }

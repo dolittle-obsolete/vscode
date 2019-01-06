@@ -1,47 +1,29 @@
-import { loadProjectConfiguration } from './Configuration/ProjectConfiguration';
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Dolittle. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 
-/**
- * @type {WeakMap<globals, import('vscode')>}
- */
-const _vscode = new WeakMap();
-/**
- * @type {WeakMap<globals, import('./Configuration/ProjectConfiguration').ProjectConfiguration>}
- */
-const _projectConfiguration = new WeakMap();
-/**
- * @type {WeakMap<globals, import('vscode').OutputChannel>}
- */
-const _dolittleOutputChannel = new WeakMap();
-/**
- * @type {WeakMap<globals, import('vscode').OutputChannel>}
- */
-const _dolittleProjectOutputChannel = new WeakMap();
-/**
- * @type {WeakMap<globals, import('vscode').OutputChannel>}
- */
-const _dolittleCliOutputChannel = new WeakMap();
-
+import {boilerPlatesManager, applicationsManager, boundedContextsManager, artifactsManager, dependenciesManager, logger} from '@dolittle/tooling.common';
+import { loadProjectConfiguration, ProjectConfiguration } from './Configuration/ProjectConfiguration';
+import { CommonToolingManager } from './CommonToolingManager';
+import { PromptManager } from './PromptManager';
 
 const dolittleOutputChannelName = 'Dolittle';
 const dolittleProjectOutputChannelName = 'Dolittle Project';
-const dolittleCliPutputChannelName = 'Dolittle CLI';
 
-class globals {    
+class globals {
+    #projectConfiguration;
+    #dolittleOutputChannel;
+    #dolittleProjectOutputChannel;
+    #commonToolingManager;
+    #promptManager;
+
     constructor() {
-        _vscode.set(this, require('vscode'));
-        _projectConfiguration.set(this, null);
-        _dolittleOutputChannel.set(this, this.vscode.window.createOutputChannel(dolittleOutputChannelName));
-        _dolittleProjectOutputChannel.set(this, this.vscode.window.createOutputChannel(dolittleProjectOutputChannelName));
-        _dolittleCliOutputChannel.set(this, this.vscode.window.createOutputChannel(dolittleCliPutputChannelName));
-    }
-    /**
-     *
-     *
-     * @readonly
-     * @memberof globals
-     */
-    get vscode() {
-        return _vscode.get(this);
+        this.#projectConfiguration = null;
+        this.#dolittleOutputChannel = this.vscode.window.createOutputChannel(dolittleOutputChannelName);
+        this.#dolittleProjectOutputChannel = this.vscode.window.createOutputChannel(dolittleProjectOutputChannelName);
+        this.#promptManager = new PromptManager(dependenciesManager, logger);
+        this.#commonToolingManager = new CommonToolingManager(boilerPlatesManager, applicationsManager, boundedContextsManager, artifactsManager, dependenciesManager, this.#promptManager, logger);
     }
     /**
      *
@@ -50,7 +32,7 @@ class globals {
      * @memberof globals
      */
     get projectConfiguration() {
-        return _projectConfiguration.get(this);
+        return this.#projectConfiguration;
     }
     /**
      *
@@ -59,26 +41,22 @@ class globals {
      * @memberof globals
      */
     get dolittleOutputChannel() {
-        return _dolittleOutputChannel.get(this);
+        return this.#dolittleOutputChannel;
     }
     /**
-     *
+     * 
      *
      * @readonly
      * @memberof globals
      */
     get dolittleProjectOutputChannel() {
-        return _dolittleProjectOutputChannel.get(this);
+        return this.#dolittleProjectOutputChannel;
     }
-
-    /**
-     *
-     *
-     * @readonly
-     * @memberof globals
-     */
-    get dolittleCliOutputChannel() {
-        return _dolittleCliOutputChannel.get(this);
+    get promptManager() {
+        return this.#promptManager;
+    }
+    get commonToolingManager() {
+        return this.#commonToolingManager;
     }
     /**
      *
@@ -87,8 +65,8 @@ class globals {
      */
     async setProjectConfiguration() {
         let config = await loadProjectConfiguration();
-        if (config === undefined) throw 'Project configuration was undefined';
-        _projectConfiguration.set(this, config);
+        if (config === undefined) throw new Error('Project configuration was undefined');
+        this.#projectConfiguration = config;
         
     }
 }

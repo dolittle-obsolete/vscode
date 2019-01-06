@@ -1,8 +1,12 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Dolittle. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 
-const _feature = new WeakMap();
-const _name = new WeakMap();
-const _subFeatures = new WeakMap();
 export class Feature {
+    #feature;
+    #name;
+    #subFeatures;
     /**
      *Creates an instance of ArtifactDefinition.
      * @param {string} feature
@@ -11,9 +15,9 @@ export class Feature {
      * @memberof ArtifactDefinition
      */
     constructor (feature, name, subFeatures) {
-        _feature.set(this, feature);
-        _name.set(this, name);
-        _subFeatures.set(this, subFeatures.map(subFeature => new Feature(subFeature.feature, subFeature.name, subFeature.subFeatures)));
+        this.#feature = feature;
+        this.#name = name;
+        this.#subFeatures = subFeatures? subFeatures.map(subFeature => new Feature(subFeature.feature, subFeature.name, subFeature.subFeatures)) : [];
         
     }
     /**
@@ -24,7 +28,7 @@ export class Feature {
      * @returns {string}
      */
     get feature() {
-        return _feature.get(this);
+        return this.#feature;
     }
     /**
      *
@@ -34,7 +38,7 @@ export class Feature {
      * @returns {string}
      */
     get name() {
-        return _name.get(this);
+        return this.#name;
     }
     /**
      *
@@ -44,7 +48,7 @@ export class Feature {
      * @returns {Feature[]}
      */
     get subFeatures() {
-        return _subFeatures.get(this);
+        return this.#subFeatures;
     }
     /**
      * 

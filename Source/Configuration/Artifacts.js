@@ -1,6 +1,13 @@
-import { BoundedContextConfiguration } from "./BoundedContextConfiguration";
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Dolittle. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+import { BoundedContext } from "./BoundedContext";
 import { ArtifactDefinitionsPerFeature } from "./ArtifactDefinitionsPerFeature";
 import { fileExistsSync, readJsonFromFileSync } from "../helpers";
+
+const path = require('path');
 
 /**
  * 
@@ -9,14 +16,13 @@ import { fileExistsSync, readJsonFromFileSync } from "../helpers";
  * @returns {Artifacts}
  */
 export function getArtifactsFromCore(corePath) {
-    const path = require('path');
     const artifactsPath = path.join(corePath, '.dolittle',  'artifacts.json');
     if (! fileExistsSync(artifactsPath)) throw `Couldn't find file at path '${artifactsPath}'`;
 
     return new Artifacts(readJsonFromFileSync(artifactsPath).artifacts);
 }
-const _artifacts = new WeakMap();
 export class Artifacts {
+    #artifacts;
     /**
      * Creates an instance of Artifacts.
      * @param {any} artifacts 
@@ -34,7 +40,7 @@ export class Artifacts {
                 artifactsPerFeature.readModels,
                 artifactsPerFeature.queries));
         });
-        _artifacts.set(this, artifactsMap);
+        this.#artifacts = artifactsMap;
     }
     /**
      *
@@ -43,6 +49,6 @@ export class Artifacts {
      * @returns {Map<string, ArtifactDefinitionsPerFeature>}
      */
     get artifacts() {
-        return _artifacts.get(this);
+        return this.#artifacts;
     }
 }

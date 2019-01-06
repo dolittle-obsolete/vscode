@@ -7,22 +7,22 @@
   * Represents a Bounded Context's core configuration
   */
 
-const _language = new WeakMap();
 export class Core
 {
+    #language;
     /**
       * Instantiates an instance of Core
       * @param {string} language 
       */
     constructor (language) {
-        _language.set(this, language);
+        this.#language = language;
     }
     /**
       * Gets the programming language
       * @returns {string} The string representing the programming language
       */
     get language() {
-        return _language.get(this);
+        return this.#language;
     }
     
 }

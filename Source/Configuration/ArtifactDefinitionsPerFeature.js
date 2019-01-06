@@ -1,12 +1,17 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Dolittle. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 import { ArtifactDefinition } from "./ArtifactDefinition";
 
-const _featureId = new WeakMap();
-const _commands = new WeakMap();
-const _events = new WeakMap();
-const _eventSources = new WeakMap();
-const _readModels = new WeakMap();
-const _queries = new WeakMap();
 export class ArtifactDefinitionsPerFeature {
+    #featureId;
+    #commands;
+    #events;
+    #eventSources;
+    #readModels;
+    #queries;
     /**
      *Creates an instance of ArtifactDefinitionsPerFeature.
      * @param {string} featureId
@@ -18,12 +23,12 @@ export class ArtifactDefinitionsPerFeature {
      * @memberof ArtifactDefinitionsPerFeature
      */
     constructor (featureId, commands, events, eventSources, readModels, queries) {
-        _featureId.set(this, featureId);
-        _commands.set(this, commands.map(artifact => new ArtifactDefinition(artifact.artifact, artifact.generation, artifact.type)));
-        _events.set(this, events.map(artifact => new ArtifactDefinition(artifact.artifact, artifact.generation, artifact.type)));
-        _eventSources.set(this, eventSources.map(artifact => new ArtifactDefinition(artifact.artifact, artifact.generation, artifact.type)));
-        _readModels.set(this, readModels.map(artifact => new ArtifactDefinition(artifact.artifact, artifact.generation, artifact.type)));
-        _queries.set(this, queries.map(artifact => new ArtifactDefinition(artifact.artifact, artifact.generation, artifact.type)));
+        this.#featureId = featureId;
+        this.#commands = commands? commands.map(artifact => new ArtifactDefinition(artifact.artifact, artifact.generation, artifact.type)) : [];
+        this.#events = events? events.map(artifact => new ArtifactDefinition(artifact.artifact, artifact.generation, artifact.type)) : [];
+        this.#eventSources = eventSources? eventSources.map(artifact => new ArtifactDefinition(artifact.artifact, artifact.generation, artifact.type)) : [];
+        this.#readModels = readModels? readModels.map(artifact => new ArtifactDefinition(artifact.artifact, artifact.generation, artifact.type)) : [];
+        this.#queries = queries? queries.map(artifact => new ArtifactDefinition(artifact.artifact, artifact.generation, artifact.type)) : [];
     }
     /**
      *
@@ -33,7 +38,7 @@ export class ArtifactDefinitionsPerFeature {
      * @returns {string}
      */
     get featureId() {
-        return _featureId.get(this);
+        return this.#featureId;
     }
     /**
      *
@@ -43,7 +48,7 @@ export class ArtifactDefinitionsPerFeature {
      * @returns {ArtifactDefinition[]}
      */
     get commands() {
-        return _commands.get(this);
+        return this.#commands;
     }
     /**
      *
@@ -53,7 +58,7 @@ export class ArtifactDefinitionsPerFeature {
      * @returns {ArtifactDefinition[]}
      */
     get events() {
-        return _events.get(this);
+        return this.#events;
     }
     /**
      *
@@ -63,7 +68,7 @@ export class ArtifactDefinitionsPerFeature {
      * @returns {ArtifactDefinition[]}
      */
     get eventSources() {
-        return _eventSources.get(this);
+        return this.#eventSources;
     }
     /**
      *
@@ -73,7 +78,7 @@ export class ArtifactDefinitionsPerFeature {
      * @returns {ArtifactDefinition[]}
      */
     get readModels() {
-        return _readModels.get(this);
+        return this.#readModels;
     }
     /**
      *
@@ -83,6 +88,6 @@ export class ArtifactDefinitionsPerFeature {
      * @returns {ArtifactDefinition[]}
      */
     get queries() {
-        return _queries.get(this);
+        return this.#queries.get(this);
     }
 }

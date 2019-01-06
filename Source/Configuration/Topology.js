@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Dolittle. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 import { fileExistsSync, readJsonFromFileSync } from "../helpers";
 import { ModuleDefinition } from "./ModuleDefinition";
 import { Feature } from "./Feature";
@@ -15,17 +20,17 @@ export function getTopologyFromCore(corePath) {
 
     return new Topology(readJsonFromFileSync(topologyPath));
 }
-const _modules = new WeakMap();
-const _features = new WeakMap();
 export class Topology {
+    #modules;
+    #features;
     /**
      * Creates an instance of Artifacts.
      * @param {{modules: {module: string, name: string, features: any[]}[], features: {feature: string, name: string, subFeatures: any[]}[]}} topology
      * @memberof Artifacts
      */
     constructor (topology) {
-        _modules.set(this, topology.modules.map(module => new ModuleDefinition(module.module, module.name, module.features)));
-        _features.set(this, topology.features.map(feature => new Feature(feature.feature, feature.name, feature.subFeatures)));
+        this.#modules = topology && topology.modules? topology.modules.map(module => new ModuleDefinition(module.module, module.name, module.features)) : [];
+        this.#features = topology && topology.features? topology.features.map(feature => new Feature(feature.feature, feature.name, feature.subFeatures)) : [];
     }
     /**
      *
@@ -35,7 +40,7 @@ export class Topology {
      * @returns {ModuleDefinition[]}
      */
     get modules() {
-        return _modules.get(this);
+        return this.#modules;
     }
     /**
      *
@@ -45,11 +50,11 @@ export class Topology {
      * @returns {Feature[]}
      */
     get features() {
-        return _features.get(this);
+        return this.#features;
     }
 
     hasModules() {
-        return this.modules.length > 0;
+        return this.#modules.length > 0;
     }
     /**
      *
@@ -60,13 +65,13 @@ export class Topology {
      */
     findFeature(feature) {
         if (this.hasModules()) {
-            for ( let module of this.modules) {
+            for ( let module of this.#modules) {
                 let res = module.findFeature(feature);
                 if (res !== null) return res;
             };
         }
         else {
-            for (let featureToSearch of this.features) {
+            for (let featureToSearch of this.#features) {
                 let res = featureToSearch.findFeature(feature);
                 if (res !== null) return res;
             }

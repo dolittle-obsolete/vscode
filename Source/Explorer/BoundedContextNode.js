@@ -1,11 +1,15 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Dolittle. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 
 import {TreeItem, TreeItemCollapsibleState} from 'vscode';
 import { FeatureNode } from './FeatureNode';
 import { ModuleNode } from './ModuleNode';
 
-const _childrenNodes = new WeakMap();
 export class BoundedContextNode extends TreeItem {
-
+    #childNodes;
     /**
      *Creates an instance of BoundedContextNode.
      * @param {string} label Bounded context name
@@ -15,8 +19,8 @@ export class BoundedContextNode extends TreeItem {
      */
     constructor (label, collapsibleState, id) {
         super(`${label} - Bounded Context`, collapsibleState);
-        _childrenNodes.set(this, []);
         super.tooltip = `id: '${id}'`;
+        this.#childNodes = [];
     }
     /**
      * Gets the features of this bounded context
@@ -26,7 +30,7 @@ export class BoundedContextNode extends TreeItem {
      * @returns {FeatureNode[]}
      */
     get children() {
-        return _childrenNodes.get(this);
+        return this.#childNodes;
     }
     /**
      * Adds a feature to the bounded context
@@ -35,7 +39,7 @@ export class BoundedContextNode extends TreeItem {
      * @memberof BoundedContextNode
      */
     addChildNode(feature) {
-        _childrenNodes.get(this).push(feature);
+        this.#childNodes.push(feature);
     }
     
 }

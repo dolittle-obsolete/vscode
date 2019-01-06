@@ -1,9 +1,14 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Dolittle. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 import { Feature } from "./Feature";
 
-const _module = new WeakMap();
-const _name = new WeakMap();
-const _features = new WeakMap();
 export class ModuleDefinition {
+    #module;
+    #name;
+    #features;
     /**
      *Creates an instance of ArtifactDefinition.
      * @param {string} module
@@ -12,9 +17,9 @@ export class ModuleDefinition {
      * @memberof ArtifactDefinition
      */
     constructor (module, name, features) {
-        _module.set(this, module);
-        _name.set(this, name);
-        _features.set(this, features.map(feature => new Feature(feature.feature, feature.name, feature.subFeatures)));
+        this.#module = module;
+        this.#name = name;
+        this.#features = features? features.map(feature => new Feature(feature.feature, feature.name, feature.subFeatures)) : [];
         
     }
     /**
@@ -25,7 +30,7 @@ export class ModuleDefinition {
      * @returns {string}
      */
     get module() {
-        return _module.get(this);
+        return this.#module;
     }
     /**
      * 
@@ -35,7 +40,7 @@ export class ModuleDefinition {
      * @returns {string}
      */
     get name() {
-        return _name.get(this);
+        return this.#name;
     }
     /**
      *
@@ -45,7 +50,7 @@ export class ModuleDefinition {
      * @returns {Feature[]}
      */
     get features() {
-        return _features.get(this);
+        return this.#features;
     }
     /**
      *

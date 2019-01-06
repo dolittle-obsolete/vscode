@@ -1,9 +1,12 @@
-
-const _artifact = new WeakMap();
-const _generation = new WeakMap();
-const _type = new WeakMap();
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Dolittle. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 
 export class ArtifactDefinition {
+    #artifact;
+    #generation;
+    #type;
     /**
      *Creates an instance of ArtifactDefinition.
      * @param {string} artifact
@@ -12,25 +15,36 @@ export class ArtifactDefinition {
      * @memberof ArtifactDefinition
      */
     constructor (artifact, generation, type) {
-        _artifact.set(this, artifact);
-        _generation.set(this, generation);
-        _type.set(this, type);
+        this.#artifact = artifact;
+        this.#generation = generation;
+        this.#type = type;
         
     }
     get artifact() {
-        return _artifact.get(this);
+        return this.#artifact;
     }
     get generation() {
-        return _generation.get(this);
+        return this.#generation;
     }
     get type() {
-        return _type.get(this);
+        return this.#type;
     }
-
-    name() {
-        return this.type.split(',')[0].split('.').pop();
+    /**
+     * Gets the name of the artifact
+     *
+     * @readonly
+     * @memberof ArtifactDefinition
+     */
+    get name() {
+        return this.#type.split(',')[0].split('.').pop();
     }
-    area() {
-        return this.type.split(',')[1].trim();
+    /**
+     * Gets the artifact area
+     *
+     * @readonly
+     * @memberof ArtifactDefinition
+     */
+    get area() {
+        return this.#type.split(',')[1].trim();
     }
 }

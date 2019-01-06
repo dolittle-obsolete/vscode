@@ -1,12 +1,16 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Dolittle. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 import { ProjectConfiguration } from '../Configuration/ProjectConfiguration';
 import { BoundedContextNode } from './BoundedContextNode';
 import { FeatureNode } from './FeatureNode';
 import { Feature } from '../Configuration/Feature';
-import { BoundedContextConfiguration } from '../Configuration/BoundedContextConfiguration';
+import { BoundedContext } from '../Configuration/BoundedContext';
 import { TreeItemCollapsibleState } from 'vscode';
 import { ArtifactDefinitionsPerFeature } from '../Configuration/ArtifactDefinitionsPerFeature';
 import { ArtifactNode } from './ArtifactNode';
-import globals from '../globals';
 import { Artifacts } from '../Configuration/Artifacts';
 import { ModuleNode } from './ModuleNode';
 import { ModuleDefinition } from '../Configuration/ModuleDefinition';
@@ -14,14 +18,16 @@ import { ModuleDefinition } from '../Configuration/ModuleDefinition';
 const vscode = require('vscode');
 
 export class BoundedContextNodeProvider {
+    #onDidChangeTreeData;
+    #config
     /**
      *Creates an instance of BoundedContextNodeProvider.
      * @param {ProjectConfiguration} config
      * @memberof BoundedContextNodeProvider
      */
     constructor(config) {    
-        this._onDidChangeTreeData = new vscode.EventEmitter();
-        this._config = config;
+        this.#onDidChangeTreeData = new vscode.EventEmitter();
+        this.#config = config;
     }
     /**
      * 
@@ -30,11 +36,11 @@ export class BoundedContextNodeProvider {
      * @memberof BoundedContextNodeProvider
      */
     get onDidChangeTreeData() {
-        return this._onDidChangeTreeData.event;
+        return this.#onDidChangeTreeData.event;
     }
 
     refresh() {
-        this._onDidChangeTreeData.fire();
+        this.#onDidChangeTreeData.fire();
     }
 
     getTreeItem(element) {
@@ -49,13 +55,13 @@ export class BoundedContextNodeProvider {
      * @returns {Promise<any[]>}
      */
     getChildren(element) {
-        if (this._config.boundedContexts.length === 0) {
+        if (this.#config.boundedContexts.length === 0) {
             vscode.window.showInformationMessage('No bounded contexts in this project');
             return Promise.resolve([]);
         }
         if (element === undefined) {
             let boundedContextNodes = [];
-            this._config.boundedContexts.forEach( boundedContext => {
+            this.#config.boundedContexts.forEach( boundedContext => {
                 boundedContextNodes.push(createBoundedContextNode(boundedContext));
             });
             return Promise.resolve(boundedContextNodes);
@@ -69,7 +75,7 @@ export class BoundedContextNodeProvider {
 /**
  * Creates a bounded context node
  *
- * @param {BoundedContextConfiguration} boundedContext
+ * @param {BoundedContext} boundedContext
  * @returns {BoundedContextNode}
  */
 function createBoundedContextNode(boundedContext) {
@@ -82,7 +88,7 @@ function createBoundedContextNode(boundedContext) {
 /**
  * Creates all the features for a BoundedContextNode
  *
- * @param {BoundedContextConfiguration} boundedContext
+ * @param {BoundedContext} boundedContext
  * @returns {FeatureNode[] | ModuleNode[]}
  */
 function findNodes(boundedContext) {
@@ -139,11 +145,11 @@ function createFeatureNode(feature, artifacts) {
  */
 function buildArtifactNodes(artifactsPerFeature) {
     let artifacts = new Array (
-        ...artifactsPerFeature.commands.map(artifact => new ArtifactNode(artifact.name(), TreeItemCollapsibleState.None, artifact.artifact, 'Command')),
-        ...artifactsPerFeature.events.map(artifact => new ArtifactNode(artifact.name(), TreeItemCollapsibleState.None, artifact.artifact, 'Event')),
-        ...artifactsPerFeature.eventSources.map(artifact => new ArtifactNode(artifact.name(), TreeItemCollapsibleState.None, artifact.artifact, 'Event Source')),
-        ...artifactsPerFeature.readModels.map(artifact => new ArtifactNode(artifact.name(), TreeItemCollapsibleState.None, artifact.artifact, 'Read Model')),
-        ...artifactsPerFeature.queries.map(artifact => new ArtifactNode(artifact.name(), TreeItemCollapsibleState.None, artifact.artifact, 'Query')),
+        ...artifactsPerFeature.commands.map(artifact => new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, artifact.artifact, 'Command')),
+        ...artifactsPerFeature.events.map(artifact => new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, artifact.artifact, 'Event')),
+        ...artifactsPerFeature.eventSources.map(artifact => new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, artifact.artifact, 'Event Source')),
+        ...artifactsPerFeature.readModels.map(artifact => new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, artifact.artifact, 'Read Model')),
+        ...artifactsPerFeature.queries.map(artifact => new ArtifactNode(artifact.name, TreeItemCollapsibleState.None, artifact.artifact, 'Query')),
     );
     return artifacts;
 }

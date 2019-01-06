@@ -1,8 +1,12 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Dolittle. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 import { Uri } from 'vscode';
 import globals from '../globals';
 
 const dotnet = require('./DotNet/dotnetProject');
-const vscode = globals.vscode;
+const vscode = require('vscode');
 const path = require('path');
 
 /**
@@ -22,7 +26,7 @@ function getBoundedContextLanguage(openDocumentUri) {
     let boundedContext = globals.projectConfiguration.boundedContexts.filter(bc => bc.workspace === workspace)[0];
 
     if (boundedContext === undefined) 
-        throw 'Something went wrong while getting the bounded context configuration'; 
+        throw new Error('Something went wrong while getting the bounded context configuration'); 
     
     return boundedContext.core.language;
 }

@@ -1,3 +1,8 @@
+bin
+dist
+.yalc
+yalc.lock
+yarn.lock
 # Logs
 logs
 *.log

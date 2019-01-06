@@ -1,9 +1,13 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Dolittle. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 
 import {TreeItem, TreeItemCollapsibleState} from 'vscode';
 import { FeatureNode } from './FeatureNode';
 
-const _features = new WeakMap();
 export class ModuleNode extends TreeItem {
+    #features;
     /**
      *Creates an instance of ModuleNode.
      * @param {string} label
@@ -13,11 +17,11 @@ export class ModuleNode extends TreeItem {
      */
     constructor (label, collapsibleState, moduleId) {
         super(`${label} - Module`, collapsibleState);
-        _features.set(this, []);
-       super.tooltip = `Module id: '${moduleId}'`;
+        super.tooltip = `Module id: '${moduleId}'`;
+        this.#features = [];
     }
     get children() {
-        return _features.get(this);
+        return this.#features;
     }
     /**
      * 
@@ -26,7 +30,7 @@ export class ModuleNode extends TreeItem {
      * @memberof FeatureNode
      */
     addFeature(feature) {
-        _features.get(this).push(feature);
+        this.#features.push(feature);
     }
 
 }
