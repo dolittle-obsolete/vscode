@@ -29,7 +29,8 @@ export class PromptManager {
     async generateContext(dependencies, language, location) {
         let context = {};
         for (let dep of dependencies) {
-            context[dep.name] = await this.handleDependency(dep, language, location);
+            context[dep.name] = await this.handleDependency(dep, language, location); 
+            console.log(context[dep.name]);
         }
         
         return context;
@@ -133,7 +134,8 @@ export class PromptManager {
      * @returns {Promise<any>} 
      */
     async getResponseFromChoice(choices, promptMessage) {
-        return await vscode.window.showQuickPick(choices, {canPickMany: false, ignoreFocusOut: true, placeHolder: promptMessage})
+        let res = await vscode.window.showQuickPick(choices, {canPickMany: false, ignoreFocusOut: true, placeHolder: promptMessage }); 
+        return res.label? res.label : res;
     }
     /**
      * 
@@ -142,6 +144,7 @@ export class PromptManager {
      * @returns {Promise<any[]>} 
      */
     async getResponseFromMultipleChoice(choices, promptMessage) {
-        return await vscode.window.showQuickPick(choices, {canPickMany: true, ignoreFocusOut: true, placeHolder: promptMessage })
+        let res = await vscode.window.showQuickPick(choices, {canPickMany: true, ignoreFocusOut: true, placeHolder: promptMessage }); 
+        return res.map(_ => _.label? _.label : _);
     }
 }

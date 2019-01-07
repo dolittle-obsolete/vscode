@@ -105,6 +105,46 @@
                 "title": "Add"
             },
             {
+                "command": "dolittle.artifacts.addCommand",
+                "category": "Dolittle Artifacts",
+                "title": "Add Command"
+            },
+            {
+                "command": "dolittle.artifacts.addEvent",
+                "category": "Dolittle Artifacts",
+                "title": "Add Event"
+            },
+            {
+                "command": "dolittle.artifacts.addReadModel",
+                "category": "Dolittle Artifacts",
+                "title": "Add Read Model"
+            },
+            {
+                "command": "dolittle.artifacts.addQuery",
+                "category": "Dolittle Artifacts",
+                "title": "Add Query"
+            },
+            {
+                "command": "dolittle.artifacts.addAggregateRoot",
+                "category": "Dolittle Artifacts",
+                "title": "Add Aggregate Root"
+            },
+            {
+                "command": "dolittle.artifacts.addCommandHandler",
+                "category": "Dolittle Artifacts",
+                "title": "Add Command Handler"
+            },
+            {
+                "command": "dolittle.artifacts.addEventProcessor",
+                "category": "Dolittle Artifacts",
+                "title": "Add Event Processor"
+            },
+            {
+                "command": "dolittle.artifacts.addConcept",
+                "category": "Dolittle Artifacts",
+                "title": "Add Concept"
+            },
+            {
                 "command": "dolittle.featuresView.reloadView",
                 "category": "Dolittle View",
                 "title": "Reload View"
@@ -121,6 +161,40 @@
             }
         ],
         "menus": {
+            "explorer/context": [
+                {
+                    "command": "dolittle.artifacts.addCommand",
+                    "group": "dolittle_artifacts"
+                },
+                {
+                    "command": "dolittle.artifacts.addEvent",
+                    "group": "dolittle_artifacts"
+                },
+                {
+                    "command": "dolittle.artifacts.addReadModel",
+                    "group": "dolittle_artifacts"
+                },
+                {
+                    "command": "dolittle.artifacts.addQuery",
+                    "group": "dolittle_artifacts"
+                },
+                {
+                    "command": "dolittle.artifacts.addAggregateRoot",
+                    "group": "dolittle_artifacts"
+                },
+                {
+                    "command": "dolittle.artifacts.addCommandHandler",
+                    "group": "dolittle_artifacts"
+                },
+                {
+                    "command": "dolittle.artifacts.addEventProcessor",
+                    "group": "dolittle_artifacts"
+                },
+                {
+                    "command": "dolittle.artifacts.addConcept",
+                    "group": "dolittle_artifacts"
+                }
+            ],
             "view/title": [
                 {
                     "command": "dolittle.featuresView.reloadView",
@@ -150,7 +224,7 @@
     },
     "dependencies": {
         "@babel/runtime": "^7.2.0",
-        "@dolittle/tooling.common": "^3.0.3",
+        "@dolittle/tooling.common": "^3.0.5",
         "vscode": "^1.1.21"
     }
 }

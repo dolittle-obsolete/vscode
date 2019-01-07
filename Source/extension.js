@@ -5,7 +5,7 @@
 
 import globals from "./globals";
 import { BoundedContextNodeProvider } from "./Explorer/BoundedContextNodeProvider";
-import { getDirectoryPath } from "./helpers";
+import { getDirectoryPath, isFile } from "./helpers";
 import { ArtifactNode } from "./Explorer/ArtifactNode";
 
 const vscode = require('vscode');
@@ -39,7 +39,6 @@ function ensureProjectConfiguration(refresh) {
  * @param {() => void} todo
  */
 function executeInContext(todo) {
-    vscode.window.
     return ensureProjectConfiguration()
         .then(
             success => todo(),
@@ -184,6 +183,15 @@ function registerDolittleProjectCommands(context) {
 }
 
 function registerDolittleArtifactsCommands(context) {
+    let handleAddArtifact = (artifactType, language, destinationFolder) => {
+        try {
+            globals.commonToolingManager.addArtifact(artifactType, language, destinationFolder);
+        }
+        catch (error) {
+            globals.dolittleProjectOutputChannel.appendLine(`Could not add artifact.\nError: ${error}`);
+            vscode.window.showErrorMessage('Could add artifact ', error);
+        }
+    }
     const artifacts = [
         'Command',
         'Event',
@@ -233,11 +241,106 @@ function registerDolittleArtifactsCommands(context) {
                     else if (conceptPick === 'GUID Concept') artifactType = 'conceptAsGuid';
                     break;
             }
-
-            globals.commonToolingManager.addArtifact(artifactType, 'csharp', getDirectoryPath(editor.document.uri.fsPath));
-        } catch (error) {
+            handleAddArtifact(artifactType, 'csharp', getDirectoryPath(editor.document.uri.fsPath));
+        }
+        catch (error) {
             globals.dolittleProjectOutputChannel.appendLine(`Could not add artifact.\nError: ${error}`);
             vscode.window.showErrorMessage('Could add artifact ', error);
+        }
+    });
+    vscode.commands.registerCommand('dolittle.artifacts.addCommand', (...args) => {
+        let uri = args[0];
+        if (uri) {
+            if (isFile(uri.fsPath)) vscode.window.showErrorMessage('Cannot add command to a file');
+            else {
+                handleAddArtifact('command', 'csharp', uri.fsPath);
+            }
+        }
+    });
+
+    vscode.commands.registerCommand('dolittle.artifacts.addEvent', (...args) => {
+        let uri = args[0];
+        if (uri) {
+            if (isFile(uri.fsPath)) vscode.window.showErrorMessage('Cannot add event to a file');
+            else {
+                handleAddArtifact('event', 'csharp', uri.fsPath);
+            }
+        }
+    });
+
+    vscode.commands.registerCommand('dolittle.artifacts.addReadModel', (...args) => {
+        let uri = args[0];
+        if (uri) {
+            if (isFile(uri.fsPath)) vscode.window.showErrorMessage('Cannot add read model to a file');
+            else {
+                handleAddArtifact('readModel', 'csharp', uri.fsPath);
+            }
+        }
+    });
+
+    vscode.commands.registerCommand('dolittle.artifacts.addQuery', async (...args) => {
+        let uri = args[0];
+        if (uri) {
+            if (isFile(uri.fsPath)) vscode.window.showErrorMessage('Cannot add query to a file');
+            else {
+                let artifactType = '';
+                const queryPick = await vscode.window.showQuickPick(['Query', 'Query For a Read Model'], {canPickMany: false, ignoreFocusOut: true});
+                if (queryPick === 'Query') artifactType = 'query';
+                else artifactType = 'queryFor';
+                handleAddArtifact(artifactType, 'csharp', uri.fsPath);
+            }
+        }
+    });
+
+    vscode.commands.registerCommand('dolittle.artifacts.addAggregateRoot', (...args) => {
+        console.log(args);
+        let uri = args[0];
+        if (uri) {
+            if (isFile(uri.fsPath)) vscode.window.showErrorMessage('Cannot add aggregate root to a file');
+            else {
+                handleAddArtifact('aggregateRoot', 'csharp', uri.fsPath);
+            }
+        }
+    });
+
+    vscode.commands.registerCommand('dolittle.artifacts.addCommandHandler', (...args) => {
+        console.log(args);
+        let uri = args[0];
+        if (uri) {
+            if (isFile(uri.fsPath)) vscode.window.showErrorMessage('Cannot add command handler to a file');
+            else {
+                handleAddArtifact('commandHandler', 'csharp', uri.fsPath);
+            }
+        }
+    });
+
+    vscode.commands.registerCommand('dolittle.artifacts.addEventProcessor', (...args) => {
+        console.log(args);
+        let uri = args[0];
+        if (uri) {
+            if (isFile(uri.fsPath)) vscode.window.showErrorMessage('Cannot add event processor to a file');
+            else {
+                handleAddArtifact('eventProcessor', 'csharp', uri.fsPath);
+            }
+        }
+    });
+    vscode.commands.registerCommand('dolittle.artifacts.addConcept', async (...args) => {
+        console.log(args);
+        let uri = args[0];
+        if (uri) {
+            if (isFile(uri.fsPath)) vscode.window.showErrorMessage('Cannot add concept to a file');
+            else {
+                let artifactType = '';
+                const conceptPick = await vscode.window.showQuickPick(
+                    ['Concept', 'Int Concept', 'String Concept', 'GUID Concept'],
+                    {canPickMany: false, ignoreFocusOut: true}
+                );
+                if (conceptPick === 'Concept') command.push('concept');
+                else if (conceptPick === 'Int Concept') artifactType = 'conceptAsInt';
+                else if (conceptPick === 'String Concept') artifactType = 'conceptAsString';
+                else if (conceptPick === 'GUID Concept') artifactType = 'conceptAsGuid';
+                handleAddArtifact(artifactType, 'csharp', uri.fsPath);
+            }
         }
     });
 }

@@ -38,6 +38,9 @@ export function getDirectoryPath(source) {
     if (fs.statSync(source).isFile()) return path.dirname(source);
     return source;
 }
+export function isFile(source) {
+    return fs.statSync(source).isFile();
+}
 
  /**
   * Gets a folder containing artifacts from a given root folder
