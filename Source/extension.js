@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import globals from "./globals";
-import { BoundedContextNodeProvider } from "./Explorer/BoundedContextNodeProvider";
 import { getDirectoryPath, isFile } from "./helpers";
 import { ArtifactNode } from "./Explorer/ArtifactNode";
+import { FeedbackViewProvider } from "./FeedbackView/FeedbackViewProvider";
 
 const vscode = require('vscode');
 const project = require('./Project/Project');
@@ -21,6 +21,10 @@ function activate(context) {
     process.addListener('uncaughtException', (error) => {
         console.error('Uncaught exception', error);
     });
+    // vscode.commands.registerCommand('dolittle.features.addFeature', (...args) => {
+    //     console.log(args);
+    //     // globals.commonToolingManager.addFeature();
+    // })
     registerViews(context);
     registerDolittleProjectCommands(context);
     registerDolittleArtifactsCommands(context);
@@ -51,7 +55,6 @@ function executeInContext(todo) {
 
 function registerViews(context) {
     globals.onConfigurationLoaded(vscode.commands.executeCommand('dolittle.featuresView.reloadView'));
-    vscode.workspace.file
     vscode.window.registerTreeDataProvider('featuresView', globals.boundedContextNodeProvider);
     vscode.commands.registerCommand('dolittle.featuresView.reloadView', async () => {
         await ensureProjectConfiguration(true)
@@ -68,6 +71,15 @@ function registerViews(context) {
 
     vscode.commands.registerCommand('dolittle.featuresView.deleteArtifact', (artifactItem: ArtifactNode) => {
         console.log('Delete artifact: ')
+    });
+
+    vscode.window.registerTreeDataProvider('feedbackView', new FeedbackViewProvider());
+    
+    vscode.commands.registerCommand('dolittle.feedbackView.issues', () => {
+        vscode.commands.executeCommand('vscode.open', vscode.Uri.parse('https://github.com/dolittle-tools/vscode/issues'));
+    });
+    vscode.commands.registerCommand('dolittle.feedbackView.tweet', () => {
+        vscode.commands.executeCommand('vscode.open', vscode.Uri.parse('https://twitter.com/dolittle'));
     });
 }
 

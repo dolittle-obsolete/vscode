@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import {boilerPlatesManager, applicationsManager, boundedContextsManager, artifactsManager, dependenciesManager, logger, } from '@dolittle/tooling.common';
+import {boilerPlatesManager, applicationsManager, boundedContextsManager, artifactsManager, dependenciesManager, logger, folders, dolittleConfig } from '@dolittle/tooling.common';
 import { loadProjectConfiguration, ProjectConfiguration } from './Configuration/ProjectConfiguration';
 import { CommonToolingManager } from './CommonToolingManager';
 import { PromptManager } from './PromptManager';
@@ -28,7 +28,7 @@ class globals {
         this.#dolittleOutputChannel = vscode.window.createOutputChannel(dolittleOutputChannelName);
         this.#dolittleProjectOutputChannel = vscode.window.createOutputChannel(dolittleProjectOutputChannelName);
         this.#promptManager = new PromptManager(dependenciesManager, logger);
-        this.#commonToolingManager = new CommonToolingManager(boilerPlatesManager, applicationsManager, boundedContextsManager, artifactsManager, dependenciesManager, this.#promptManager, logger);
+        this.#commonToolingManager = new CommonToolingManager(boilerPlatesManager, applicationsManager, boundedContextsManager, artifactsManager, dependenciesManager, folders, dolittleConfig, this.#promptManager, logger);
         this.#configurationLoaded = new vscode.EventEmitter();
 
         this.#boundedContextNodeProvider = new BoundedContextNodeProvider();

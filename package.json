@@ -40,6 +40,10 @@
                 {
                     "id": "eventStoreView",
                     "name": "Event Store"
+                },
+                {
+                    "id": "feedbackView",
+                    "name": "Feedback"
                 }
             ]
         },
@@ -158,7 +162,18 @@
                 "command": "dolittle.featuresView.deleteArtifact",
                 "category": "Dolittle View",
                 "title": "Delete"
+            },
+            {
+                "command": "dolittle.feedbackView.issues",
+                "category": "Dolittle Feedback View",
+                "title": "Issues"
+            },
+            {
+                "command": "dolittle.feedbackView.tweet",
+                "category": "Dolittle Feedback View",
+                "title": "Tweet"
             }
+            
         ],
         "menus": {
             "explorer/context": [
@@ -224,7 +239,7 @@
     },
     "dependencies": {
         "@babel/runtime": "^7.2.0",
-        "@dolittle/tooling.common": "^3.0.5",
+        "@dolittle/tooling.common": "^4.0.0",
         "vscode": "^1.1.21"
     }
 }

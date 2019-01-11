@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import {BoilerPlatesManager, ApplicationsManager, BoundedContextsManager, ArtifactsManager, DependenciesManager } from '@dolittle/tooling.common';
+import {BoilerPlatesManager, ApplicationsManager, BoundedContextsManager, ArtifactsManager, DependenciesManager, Folders } from '@dolittle/tooling.common';
 import { PromptManager } from './PromptManager';
 
 const vscode = require('vscode');
@@ -14,15 +14,19 @@ export class CommonToolingManager {
     #boundedContextsManager: BoundedContextsManager;
     #artifactsManager: ArtifactsManager;
     #dependenciesManager: DependenciesManager;
+    #folders: Folders;
+    #dolittleConfig;
     #promptManager: PromptManager;
     #logger;
 
-    constructor(boilerPlatesManager, applicationsManager, boundedContextsManager, artifactsManager, dependenciesManager, promptManager, logger) {
+    constructor(boilerPlatesManager, applicationsManager, boundedContextsManager, artifactsManager, dependenciesManager, folders, dolittleConfig, promptManager, logger) {
         this.#boilerPlatesManager = boilerPlatesManager;
         this.#applicationsManager = applicationsManager;
         this.#boundedContextsManager = boundedContextsManager;
         this.#artifactsManager = artifactsManager;
         this.#dependenciesManager = dependenciesManager;
+        this.#folders = folders;
+        this.#dolittleConfig = dolittleConfig;
         this.#promptManager = promptManager;
         this.#logger = logger;
 
@@ -32,6 +36,8 @@ export class CommonToolingManager {
     get boundedContextsManager() {return this.#boundedContextsManager}
     get artifactsManager() {return this.#artifactsManager}
     get dependenciesManager() {return this.#dependenciesManager}
+    get folders() {return this.#folders}
+    get dolittleConfig() {return this.#dolittleConfig}
     get promptManager() {return this.#promptManager}
     get logger() {return this.#logger}
 
@@ -65,6 +71,11 @@ export class CommonToolingManager {
         return this.boundedContextsManager.createBoundedContext(context, language, destinationFolder);
 
     }
+    // async addFeature(cwd, feature) {
+    //     // Get workspace from URI
+    //     this.boundedContextsManager.
+    //     this.folders.createFeature(cwd, feature, boundedContext, this.dolittleConfig);
+    // }
     /**
      * Adds an artifact
      *
