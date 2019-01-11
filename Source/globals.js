@@ -13,10 +13,12 @@ import { BoundedContextNodeProvider } from './Explorer/BoundedContextNodeProvide
 const vscode = require('vscode');
 const dolittleOutputChannelName = 'Dolittle';
 const dolittleProjectOutputChannelName = 'Dolittle Project';
+const dolittleDebugOutputChannelName = 'Dolittle Debug';
 class globals {
     #projectConfiguration: ProjectConfiguration;
     #dolittleOutputChannel;
     #dolittleProjectOutputChannel;
+    #dolittleDebugOutputChannel;
     #commonToolingManager: CommonToolingManager;
     #promptManager: PromptManager;
     #boundedContextNodeProvider: BoundedContextNodeProvider;
@@ -27,6 +29,7 @@ class globals {
         this.#projectConfiguration = null;
         this.#dolittleOutputChannel = vscode.window.createOutputChannel(dolittleOutputChannelName);
         this.#dolittleProjectOutputChannel = vscode.window.createOutputChannel(dolittleProjectOutputChannelName);
+        this.#dolittleDebugOutputChannel = vscode.window.createOutputChannel(dolittleDebugOutputChannelName);
         this.#promptManager = new PromptManager(dependenciesManager, logger);
         this.#commonToolingManager = new CommonToolingManager(boilerPlatesManager, applicationsManager, boundedContextsManager, artifactsManager, dependenciesManager, folders, dolittleConfig, this.#promptManager, logger);
         this.#configurationLoaded = new vscode.EventEmitter();
@@ -64,6 +67,15 @@ class globals {
      */
     get dolittleProjectOutputChannel() {
         return this.#dolittleProjectOutputChannel;
+    }
+    /**
+     * 
+     *
+     * @readonly
+     * @memberof globals
+     */
+    get dolittleDebugOutputChannel() {
+        return this.#dolittleDebugOutputChannel;
     }
     /**
      *

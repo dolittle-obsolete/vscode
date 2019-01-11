@@ -47,6 +47,7 @@ function executeInContext(todo) {
         .then(
             success => todo(),
             error => {
+                globals.dolittleDebugOutputChannel.appendLine(`Failed to load dolittle projects.\nError: ${error}`)
                 vscode.window.showErrorMessage(`Failed to load dolittle projects.\nError: ${error}`);
                 throw error;
             }
@@ -80,6 +81,12 @@ function registerViews(context) {
     });
     vscode.commands.registerCommand('dolittle.feedbackView.tweet', () => {
         vscode.commands.executeCommand('vscode.open', vscode.Uri.parse('https://twitter.com/dolittle'));
+    });
+    vscode.commands.registerCommand('dolittle.feedbackView.documentation', () => {
+        vscode.commands.executeCommand('vscode.open', vscode.Uri.parse('https://dolittle.io/'))
+    });
+    vscode.commands.registerCommand('dolittle.feedbackView.sample', () => {
+        vscode.commands.executeCommand('vscode.open', vscode.Uri.parse('https://github.com/dolittle-samples/eCommerce'))
     });
 }
 

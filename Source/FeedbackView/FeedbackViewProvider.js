@@ -5,13 +5,16 @@
 
 import { IssuesNode } from './IssuesNode';
 import { TweetNode } from './TweetNode';
+import { SampleNode } from './SampleNode';
+import { DocumentationNode } from './DocumentationNode';
 const vscode = require('vscode');
 
 const nodes = [
     new IssuesNode(),
-    new TweetNode()
-
-]
+    new TweetNode(),
+    new SampleNode(),
+    new DocumentationNode()
+];
 
 export class FeedbackViewProvider {
     #onDidChangeTreeData;

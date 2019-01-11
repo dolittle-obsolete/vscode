@@ -172,8 +172,17 @@
                 "command": "dolittle.feedbackView.tweet",
                 "category": "Dolittle Feedback View",
                 "title": "Tweet"
-            }
-            
+            },
+            {
+                "command": "dolittle.feedbackView.documentation",
+                "category": "Dolittle Feedback View",
+                "title": "Documentation"
+            },
+            {
+                "command": "dolittle.feedbackView.sample",
+                "category": "Dolittle Feedback View",
+                "title": "Sample"
+            } 
         ],
         "menus": {
             "explorer/context": [
