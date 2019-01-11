@@ -1,10 +1,9 @@
 {
     "name": "@dolittle/vscode",
     "displayName": "Dolittle",
-    "description": "Tools and extensions that enables you to become a Dolittle superhero!",
-    "version": "0.0.1",
+    "description": "Tools and extensions that enables you to become a Dolittle ninja!",
+    "version": "1.0.0",
     "author": "Dolittle",
-    "publisher": "woksin",
     "homepage": "https://dolittle.io",
     "license": "MIT",
     "engines": {
@@ -19,7 +18,8 @@
     "main": "bin/extension.js",
     "files": [
         "bin",
-        "node_modules"
+        "node_modules",
+        "Resources"
     ],
     "contributes": {
         "viewsContainers": {
