@@ -6,7 +6,7 @@
 import globals from "./globals";
 import { getDirectoryPath, isFile } from "./helpers";
 import { ArtifactNode } from "./Explorer/ArtifactNode";
-import { FeedbackViewProvider } from "./FeedbackView/FeedbackViewProvider";
+import { UsefulLinksViewProvider } from "./usefulLinksView/UsefulLinksViewProvider";
 
 const vscode = require('vscode');
 const project = require('./Project/Project');
@@ -74,18 +74,18 @@ function registerViews(context) {
         console.log('Delete artifact: ')
     });
 
-    vscode.window.registerTreeDataProvider('feedbackView', new FeedbackViewProvider());
+    vscode.window.registerTreeDataProvider('usefulLinksView', new UsefulLinksViewProvider());
     
-    vscode.commands.registerCommand('dolittle.feedbackView.issues', () => {
+    vscode.commands.registerCommand('dolittle.usefulLinksView.issues', () => {
         vscode.commands.executeCommand('vscode.open', vscode.Uri.parse('https://github.com/dolittle-tools/vscode/issues'));
     });
-    vscode.commands.registerCommand('dolittle.feedbackView.tweet', () => {
+    vscode.commands.registerCommand('dolittle.usefulLinksView.tweet', () => {
         vscode.commands.executeCommand('vscode.open', vscode.Uri.parse('https://twitter.com/dolittle'));
     });
-    vscode.commands.registerCommand('dolittle.feedbackView.documentation', () => {
+    vscode.commands.registerCommand('dolittle.usefulLinksView.documentation', () => {
         vscode.commands.executeCommand('vscode.open', vscode.Uri.parse('https://dolittle.io/'))
     });
-    vscode.commands.registerCommand('dolittle.feedbackView.sample', () => {
+    vscode.commands.registerCommand('dolittle.usefulLinksView.sample', () => {
         vscode.commands.executeCommand('vscode.open', vscode.Uri.parse('https://github.com/dolittle-samples/eCommerce'))
     });
 }

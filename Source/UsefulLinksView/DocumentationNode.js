@@ -8,8 +8,8 @@ const path = require('path');
 
 export class DocumentationNode extends TreeItem {
     constructor() {
-        super('Have a look at our documentation. That should get you going!', TreeItemCollapsibleState.None);
+        super('Read the Dolittle documentation!', TreeItemCollapsibleState.None);
         super.iconPath = path.join(__filename, '..', '..', '..', 'Resources', 'iconfinder_Info_Circle_Symbol_Information_Letter_1396823.png');
-        super.command = {command: 'dolittle.feedbackView.documentation', title: 'Documentation'};
+        super.command = {command: 'dolittle.usefulLinksView.documentation', title: 'Documentation'};
     }
 }

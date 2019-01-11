@@ -6,10 +6,10 @@
 import { TreeItem, TreeItemCollapsibleState, commands } from "vscode";
 const path = require('path');
 
-export class IssuesNode extends TreeItem {
+export class TweetNode extends TreeItem {
     constructor() {
-        super('Having issues?', TreeItemCollapsibleState.None);
-        super.iconPath = path.join(__filename, '..', '..', '..', 'Resources', 'GitHub-Mark-Light-32px.png');
-        super.command = {command: 'dolittle.feedbackView.issues', title: 'Issues'};
+        super('Give us a tweet', TreeItemCollapsibleState.None);
+        super.iconPath = path.join(__filename, '..', '..', '..', 'Resources', 'Twitter_Social_Icon_Circle_Color.png');
+        super.command = {command: 'dolittle.usefulLinksView.tweet', title: 'Tweet'};
     }
 }

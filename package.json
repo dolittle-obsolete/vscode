@@ -42,8 +42,8 @@
                     "name": "Event Store"
                 },
                 {
-                    "id": "feedbackView",
-                    "name": "Feedback"
+                    "id": "usefulLinksView",
+                    "name": "Useful Links"
                 }
             ]
         },
@@ -164,22 +164,22 @@
                 "title": "Delete"
             },
             {
-                "command": "dolittle.feedbackView.issues",
+                "command": "dolittle.usefulLinksView.issues",
                 "category": "Dolittle Feedback View",
                 "title": "Issues"
             },
             {
-                "command": "dolittle.feedbackView.tweet",
+                "command": "dolittle.usefulLinksView.tweet",
                 "category": "Dolittle Feedback View",
                 "title": "Tweet"
             },
             {
-                "command": "dolittle.feedbackView.documentation",
+                "command": "dolittle.usefulLinksView.documentation",
                 "category": "Dolittle Feedback View",
                 "title": "Documentation"
             },
             {
-                "command": "dolittle.feedbackView.sample",
+                "command": "dolittle.usefulLinksView.sample",
                 "category": "Dolittle Feedback View",
                 "title": "Sample"
             } 

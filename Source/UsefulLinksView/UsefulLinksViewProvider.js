@@ -16,21 +16,12 @@ const nodes = [
     new DocumentationNode()
 ];
 
-export class FeedbackViewProvider {
+export class UsefulLinksViewProvider {
     #onDidChangeTreeData;
-    /**
-     *Creates an instance of {FeedbackViewProvider}.
-     * @memberof BoundedContextNodeProvider
-     */
+    
     constructor() {    
         this.#onDidChangeTreeData = new vscode.EventEmitter();
     }
-    /**
-     * 
-     *
-     * @readonly
-     * @memberof BoundedContextNodeProvider
-     */
     get onDidChangeTreeData() {
         return this.#onDidChangeTreeData.event;
     }
@@ -43,13 +34,6 @@ export class FeedbackViewProvider {
         return element;
     }
 
-    /**
-     * Gets the children nodes
-     *
-     * @param {BoundedContextNode | ModuleNode | FeatureNode} element
-     * @memberof BoundedContextNodeProvider
-     * @returns {Promise<any[]>}
-     */
     getChildren(element) {
         if (element === undefined) {
             return Promise.resolve(nodes);
