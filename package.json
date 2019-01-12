@@ -2,7 +2,7 @@
     "name": "@dolittle/vscode",
     "displayName": "Dolittle",
     "description": "Tools and extensions that enables you to become a Dolittle ninja!",
-    "version": "1.0.0",
+    "version": "0.0.0",
     "author": "Dolittle",
     "homepage": "https://dolittle.io",
     "license": "MIT",
