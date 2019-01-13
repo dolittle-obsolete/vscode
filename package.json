@@ -1,9 +1,12 @@
 {
-    "name": "@dolittle/vscode",
+    "name": "dolittle-vscode",
     "displayName": "Dolittle",
     "description": "Tools and extensions that enables you to become a Dolittle ninja!",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "author": "Dolittle",
+    "repository": "https://github.com/dolittle-tools/vscode",
+    "icon": "Resources/dolittle_red_white_logo_256px.png",
+    "publisher": "Dolittle",
     "homepage": "https://dolittle.io",
     "license": "MIT",
     "engines": {
@@ -241,7 +244,8 @@
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install",
         "build": "rm -rf bin && npx babel Source --ignore **/for_* -d bin --source-maps inline",
-        "prepublish": "yarn build"
+        "prepublish": "yarn build",
+        "vscode:prepublish": "rm -rf node_modules && yarn"
     },
     "devDependencies": {
         "@dolittle/build": "^4.3.0"
