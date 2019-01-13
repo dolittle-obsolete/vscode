@@ -27,7 +27,7 @@ export async function loadBoundedContextConfigurations() {
     let boundedContextConfigs = [];
     for (let uri of uris) {
         let workspace = vscode.workspace.getWorkspaceFolder(uri);
-        const filePath = uri.path;
+        const filePath = uri.fsPath;
         const jsonObj = readJsonFromUriSync(uri);
         
         const application = jsonObj['application'];

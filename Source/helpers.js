@@ -14,8 +14,8 @@ const path = require('path');
   * @returns {any}
   */
 export function readJsonFromUriSync(uri) {
-    if (uri.scheme !== 'file') throw `${uri.path} is not a file`
-    return fs.readJsonSync(uri.path);
+    if (uri.scheme !== 'file') throw `${uri.fsPath} is not a file`
+    return fs.readJsonSync(uri.fsPath);
 }
 
 export function readJsonFromFileSync(source) {

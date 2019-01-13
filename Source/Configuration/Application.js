@@ -27,7 +27,9 @@ export async function loadApplicationConfiguration() {
     }
     
     const applicationUri = uris[0];
-    const filePath = applicationUri.path;
+    const filePath = applicationUri.fsPath;
+    globals.dolittleProjectOutputChannel.appendLine(filePath)
+    globals.dolittleProjectOutputChannel.appendLine(applicationUri.fsPath);
 
     const jsonObj = readJsonFromUriSync(applicationUri);
 
