@@ -22,7 +22,8 @@
     "files": [
         "bin",
         "node_modules",
-        "Resources"
+        "Resources",
+        "Snippets"
     ],
     "contributes": {
         "viewsContainers": {
@@ -243,33 +244,33 @@
         "snippets": [
             {
                 "language": "",
-                "path": "bin/Snippets/global.code-snippets"
+                "path": "Snippets/global.code-snippets"
             },
             {
                 "language": "csharp",
-                "path": "bin/Snippets/csharp.json"
+                "path": "Snippets/csharp.json"
             },
             {
                 "language": "html",
-                "path": "bin/Snippets/html.json"
+                "path": "Snippets/html.json"
             },
             {
                 "language": "javascript",
-                "path": "bin/Snippets/javascript.json"
+                "path": "Snippets/javascript.json"
             },
             {
                 "language": "markdown",
-                "path": "bin/Snippets/markdown.json"
+                "path": "Snippets/markdown.json"
             },
             {
                 "language": "scss",
-                "path": "bin/Snippets/scss.json"
+                "path": "Snippets/scss.json"
             }
         ]
     },
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install",
-        "build": "rm -rf bin && npx babel Source --ignore **/for_* -d bin --source-maps inline && cp -R ./Source/Snippets ./bin/.",
+        "build": "rm -rf bin && npx babel Source --ignore **/for_* -d bin --source-maps inline",
         "prepublish": "yarn build",
         "vscode:prepublish": "rm -rf node_modules && yarn"
     },
