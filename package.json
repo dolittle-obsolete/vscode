@@ -239,7 +239,33 @@
                     "when": "view == featuresView && viewItem == artifact"
                 }
             ]
-        }
+        },
+        "snippets": [
+            {
+                "language": "",
+                "path": "bin/Snippets/global.code-snippets"
+            },
+            {
+                "language": "csharp",
+                "path": "bin/Snippets/csharp.json"
+            },
+            {
+                "language": "html",
+                "path": "bin/Snippets/html.json"
+            },
+            {
+                "language": "javascript",
+                "path": "bin/Snippets/javascript.json"
+            },
+            {
+                "language": "markdown",
+                "path": "bin/Snippets/markdown.json"
+            },
+            {
+                "language": "scss",
+                "path": "bin/Snippets/scss.json"
+            }
+        ]
     },
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install",
