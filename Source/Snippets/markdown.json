@@ -1,2 +1,42 @@
 {
+    "Building Block": {
+        "prefix": "doBuildingBlock",
+        "body": [
+            "---",
+            "title: $1",
+            "description: What a $1 is, and how to use it.",
+            "keywords: building-block",
+            "draft: true",
+            "---",
+            "",
+            "<!-- Introduction ",
+            "What is a $1 and what is its role in the system",
+            "-->",
+            "$0",
+            "",
+            "## Implementing a $1",
+            "<!-- Implement a $1 in language ",
+            "",
+            "Describe how to implement a $1 and any of its interfaces.",
+            "",
+            "Examples of high level implementation",
+            "```csharp",
+            "\t// example here",
+            "```",
+            "-->",
+            "",
+            "## Common Usage Scenario",
+            "<!-- Example of $1",
+            "",
+            "Describe how $1 will be used with a practical example. ie: ",
+            "",
+            "Common usage pattern:",
+            "Example of usage with handling commands in language",
+            "```csharp",
+            "\t// example here",
+            "```",
+            "-->"
+        ],
+        "description": "Document template for a Building Block-level article."
+    }
 }
