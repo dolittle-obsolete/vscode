@@ -2,7 +2,7 @@
     "name": "dolittle-vscode",
     "displayName": "Dolittle",
     "description": "Tools and extensions that enables you to become a Dolittle ninja!",
-    "version": "0.0.2",
+    "version": "0.1.0",
     "author": "Dolittle",
     "repository": "https://github.com/dolittle-tools/vscode",
     "icon": "Resources/dolittle_red_white_logo_256px.png",
@@ -22,7 +22,8 @@
     "files": [
         "bin",
         "node_modules",
-        "Resources"
+        "Resources",
+        "Snippets"
     ],
     "contributes": {
         "viewsContainers": {
@@ -239,7 +240,33 @@
                     "when": "view == featuresView && viewItem == artifact"
                 }
             ]
-        }
+        },
+        "snippets": [
+            {
+                "language": "",
+                "path": "Snippets/global.code-snippets"
+            },
+            {
+                "language": "csharp",
+                "path": "Snippets/csharp.json"
+            },
+            {
+                "language": "html",
+                "path": "Snippets/html.json"
+            },
+            {
+                "language": "javascript",
+                "path": "Snippets/javascript.json"
+            },
+            {
+                "language": "markdown",
+                "path": "Snippets/markdown.json"
+            },
+            {
+                "language": "scss",
+                "path": "Snippets/scss.json"
+            }
+        ]
     },
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install",
