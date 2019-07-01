@@ -82,7 +82,27 @@
                 "command": "dolittle.update",
                 "category": "Dolittle",
                 "title": "Update"
-            }
+            },
+            {
+                "command": "dolittle.usefulLinksView.issues",
+                "category": "Dolittle Useful Links",
+                "title": "Issues"
+            },
+            {
+                "command": "dolittle.usefulLinksView.tweet",
+                "category": "Dolittle Useful Links",
+                "title": "Tweet"
+            },
+            {
+                "command": "dolittle.usefulLinksView.documentation",
+                "category": "Dolittle Useful Links",
+                "title": "Documentation"
+            },
+            {
+                "command": "dolittle.usefulLinksView.samples",
+                "category": "Dolittle Useful Links",
+                "title": "Samples"
+            } 
         ],
         "snippets": [
             {

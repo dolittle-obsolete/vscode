@@ -5,40 +5,34 @@
 
 import { IssuesNode } from './IssuesNode';
 import { TweetNode } from './TweetNode';
-import { SampleNode } from './SampleNode';
+import { SamplesNode } from './SamplesNode';
 import { DocumentationNode } from './DocumentationNode';
-const vscode = require('vscode');
+import * as vscode from 'vscode';
+import { ILinkNode } from './ILinkNode';
 
 const nodes = [
     new IssuesNode(),
     new TweetNode(),
-    new SampleNode(),
+    new SamplesNode(),
     new DocumentationNode()
 ];
 
-export class UsefulLinksViewProvider {
-    #onDidChangeTreeData;
+export class UsefulLinksViewProvider implements vscode.TreeDataProvider<ILinkNode> {
+    private _onDidChangeTreeData: vscode.EventEmitter<ILinkNode> = new vscode.EventEmitter<ILinkNode>();
+    readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
     
-    constructor() {    
-        this.#onDidChangeTreeData = new vscode.EventEmitter();
-    }
-    get onDidChangeTreeData() {
-        return this.#onDidChangeTreeData.event;
-    }
-
     refresh() {
-        this.#onDidChangeTreeData.fire();
+        this._onDidChangeTreeData.fire();
     }
 
-    getTreeItem(element) {
+    getTreeItem(element: ILinkNode) {
         return element;
     }
 
-    getChildren(element) {
+    async getChildren(element?: ILinkNode) {
         if (element === undefined) {
-            return Promise.resolve(nodes);
+            return nodes;
         }
+        return undefined;
     }
-    
-
 }
