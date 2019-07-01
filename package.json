@@ -2,7 +2,7 @@
     "name": "dolittle-vscode",
     "displayName": "Dolittle",
     "description": "Tools and extensions that enables you to become a Dolittle ninja!",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "author": "Dolittle",
     "repository": "https://github.com/dolittle-tools/vscode",
     "icon": "Resources/dolittle_red_white_logo_256px.png",
@@ -10,7 +10,8 @@
     "homepage": "https://dolittle.io",
     "license": "MIT",
     "engines": {
-        "vscode": "^1.30.0"
+        "vscode": "^1.35.0",
+        "node": ">=10.0.0"
     },
     "categories": [
         "Other"
@@ -18,14 +19,39 @@
     "activationEvents": [
         "*"
     ],
-    "main": "bin/extension.js",
+    "main": "./bin/extension.js",
     "files": [
         "bin",
-        "node_modules",
         "Resources",
         "Snippets"
     ],
+    "scripts": {
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "build": "yarn clean && tsc",
+        "clean": "rimraf bin",
+        "prepublish": "yarn build",
+        "vscode:prepublish": "rm -rf node_modules && yarn"
+    },
+    "devDependencies": {
+        "@types/node": "12.0.0",
+        "rimraf": "^2.6.3",
+        "typescript": "^3.5.2"
+    },
+    "dependencies": {
+        "@dolittle/tooling.common": "6.*",
+        "@dolittle/tooling.common.boilerplates": "6.*",
+        "@dolittle/tooling.common.commands": "6.*",
+        "@dolittle/tooling.common.configurations": "6.*",
+        "@dolittle/tooling.common.dependencies": "6.*",
+        "@dolittle/tooling.common.files": "6.*",
+        "@dolittle/tooling.common.logging": "6.*",
+        "@dolittle/tooling.common.packages": "6.*",
+        "@dolittle/tooling.common.plugins": "6.*",
+        "@dolittle/tooling.common.utilities": "6.*",
+        "vscode": "^1.1.35"
+    },
     "contributes": {
+        
         "viewsContainers": {
             "activitybar": [
                 {
@@ -56,191 +82,8 @@
                 "command": "dolittle.update",
                 "category": "Dolittle",
                 "title": "Update"
-            },
-            {
-                "command": "dolittle.project.build",
-                "category": "Dolittle Project",
-                "title": "Build"
-            },
-            {
-                "command": "dolittle.project.buildCurrent",
-                "category": "Dolittle Project",
-                "title": "Build Current"
-            },
-            {
-                "command": "dolittle.project.restore",
-                "category": "Dolittle Project",
-                "title": "Restore"
-            },
-            {
-                "command": "dolittle.project.test",
-                "category": "Dolittle Project",
-                "title": "Test"
-            },
-            {
-                "command": "dolittle.project.testDebug",
-                "category": "Dolittle Project",
-                "title": "Test Debug"
-            },
-            {
-                "command": "dolittle.project.testRerun",
-                "category": "Dolittle Project",
-                "title": "Test Rerun"
-            },
-            {
-                "command": "dolittle.project.newDolittleProject",
-                "category": "Dolittle Project",
-                "title": "New Dolittle Project"
-            },
-            {
-                "command": "dolittle.project.createBoundedContext",
-                "category": "Dolittle Project",
-                "title": "Create Bounded Context"
-            },
-            {
-                "command": "dolittle.project.createApplication",
-                "category": "Dolittle Project",
-                "title": "Create Application"
-            },
-            {
-                "command": "dolittle.project.reloadProject",
-                "category": "Dolittle Project",
-                "title": "Reload Projects"
-            },
-            {
-                "command": "dolittle.artifacts.addArtifact",
-                "category": "Dolittle Artifacts",
-                "title": "Add"
-            },
-            {
-                "command": "dolittle.artifacts.addCommand",
-                "category": "Dolittle Artifacts",
-                "title": "Add Command"
-            },
-            {
-                "command": "dolittle.artifacts.addEvent",
-                "category": "Dolittle Artifacts",
-                "title": "Add Event"
-            },
-            {
-                "command": "dolittle.artifacts.addReadModel",
-                "category": "Dolittle Artifacts",
-                "title": "Add Read Model"
-            },
-            {
-                "command": "dolittle.artifacts.addQuery",
-                "category": "Dolittle Artifacts",
-                "title": "Add Query"
-            },
-            {
-                "command": "dolittle.artifacts.addAggregateRoot",
-                "category": "Dolittle Artifacts",
-                "title": "Add Aggregate Root"
-            },
-            {
-                "command": "dolittle.artifacts.addCommandHandler",
-                "category": "Dolittle Artifacts",
-                "title": "Add Command Handler"
-            },
-            {
-                "command": "dolittle.artifacts.addEventProcessor",
-                "category": "Dolittle Artifacts",
-                "title": "Add Event Processor"
-            },
-            {
-                "command": "dolittle.artifacts.addConcept",
-                "category": "Dolittle Artifacts",
-                "title": "Add Concept"
-            },
-            {
-                "command": "dolittle.featuresView.reloadView",
-                "category": "Dolittle View",
-                "title": "Reload View"
-            },
-            {
-                "command": "dolittle.featuresView.editArtifact",
-                "category": "Dolittle View",
-                "title": "Edit"
-            },
-            {
-                "command": "dolittle.featuresView.deleteArtifact",
-                "category": "Dolittle View",
-                "title": "Delete"
-            },
-            {
-                "command": "dolittle.usefulLinksView.issues",
-                "category": "Dolittle Feedback View",
-                "title": "Issues"
-            },
-            {
-                "command": "dolittle.usefulLinksView.tweet",
-                "category": "Dolittle Feedback View",
-                "title": "Tweet"
-            },
-            {
-                "command": "dolittle.usefulLinksView.documentation",
-                "category": "Dolittle Feedback View",
-                "title": "Documentation"
-            },
-            {
-                "command": "dolittle.usefulLinksView.sample",
-                "category": "Dolittle Feedback View",
-                "title": "Sample"
-            } 
+            }
         ],
-        "menus": {
-            "explorer/context": [
-                {
-                    "command": "dolittle.artifacts.addCommand",
-                    "group": "dolittle_artifacts"
-                },
-                {
-                    "command": "dolittle.artifacts.addEvent",
-                    "group": "dolittle_artifacts"
-                },
-                {
-                    "command": "dolittle.artifacts.addReadModel",
-                    "group": "dolittle_artifacts"
-                },
-                {
-                    "command": "dolittle.artifacts.addQuery",
-                    "group": "dolittle_artifacts"
-                },
-                {
-                    "command": "dolittle.artifacts.addAggregateRoot",
-                    "group": "dolittle_artifacts"
-                },
-                {
-                    "command": "dolittle.artifacts.addCommandHandler",
-                    "group": "dolittle_artifacts"
-                },
-                {
-                    "command": "dolittle.artifacts.addEventProcessor",
-                    "group": "dolittle_artifacts"
-                },
-                {
-                    "command": "dolittle.artifacts.addConcept",
-                    "group": "dolittle_artifacts"
-                }
-            ],
-            "view/title": [
-                {
-                    "command": "dolittle.featuresView.reloadView",
-                    "when": "view == featuresView",
-                    "group": "navigation"
-                }
-            ],
-            "view/item/context": [
-                {
-                    "command": "dolittle.featuresView.editArtifact",
-                    "when": "view == featuresView && viewItem == artifact"
-                },
-                {
-                    "command": "dolittle.featuresView.deleteArtifact",
-                    "when": "view == featuresView && viewItem == artifact"
-                }
-            ]
-        },
         "snippets": [
             {
                 "language": "",
@@ -267,19 +110,5 @@
                 "path": "Snippets/scss.json"
             }
         ]
-    },
-    "scripts": {
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "build": "rm -rf bin && npx babel Source --ignore **/for_* -d bin --source-maps inline",
-        "prepublish": "yarn build",
-        "vscode:prepublish": "rm -rf node_modules && yarn"
-    },
-    "devDependencies": {
-        "@dolittle/build": "^4.3.0"
-    },
-    "dependencies": {
-        "@babel/runtime": "^7.2.0",
-        "@dolittle/tooling.common": "^4.0.0",
-        "vscode": "^1.1.21"
     }
 }
