@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See LICENSE in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 import * as vscode from 'vscode';
-import { ILinkNode } from './ILinkNode';
+import { ILinkNode } from '../index';
 
 /**
  * Represents a base implementation of {ILinkNode} and {vscode.TreeItem}

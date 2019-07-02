@@ -6,16 +6,21 @@ import './turnOffLogging';
 
 import * as vscode from 'vscode';
 import globals from './globals';
-import { UsefulLinksViewProvider } from './UsefulLinksView/UsefulLinksViewProvider';
+import { UsefulLinksViewProvider } from './index';
 
 
 export function activate(context: vscode.ExtensionContext) {
     registerCommands(context);
     registerViews(context);
+    
 }
 
 function registerCommands(context: vscode.ExtensionContext) {
-    
+    vscode.commands.registerTextEditorCommand('dolittle.tooling.commands', async (editor, edit) => {
+        
+        let commandsSystem = await globals.getCommandsSystem();
+        commandsSystem.executeCommand(editor);
+    });
 }
 
 function registerViews(context: vscode.ExtensionContext) {

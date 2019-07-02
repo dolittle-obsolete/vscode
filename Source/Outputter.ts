@@ -18,12 +18,9 @@ export class Outputter implements ICanOutputMessages {
     private static errorChannel: vscode.OutputChannel = vscode.window.createOutputChannel('Dolittle Error');
 
     print(...args: string[]): void {
-        Outputter.debugChannel.show(true);
         args.forEach(_ => Outputter.debugChannel.appendLine(_));
     }
     warn(...args: string[]): void {
-
-        Outputter.warnChannel.show(true);
         args.forEach(_ => Outputter.warnChannel.appendLine(_));
     }
     error(...args: string[]): void {

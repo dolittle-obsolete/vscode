@@ -8,7 +8,7 @@ import {
     DiscoverAndPromptDependency, IPromptDependency, confirmUserInputType, dependencyIsPromptDependency, dependencyIsDiscoverDependency, IDiscoverDependency, inputUserInputType, chooseOneUserInputType, chooseMultipleUserInputType 
 } from '@dolittle/tooling.common.dependencies';
 import * as vscode from 'vscode';
-import { Outputter } from './Outputter';
+import { Outputter } from './index';
 
 export class PromptDependencyResolver implements ICanResolveSyncDependencies  {
     

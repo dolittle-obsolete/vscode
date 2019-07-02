@@ -3,12 +3,8 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IssuesNode } from './IssuesNode';
-import { TweetNode } from './TweetNode';
-import { SamplesNode } from './SamplesNode';
-import { DocumentationNode } from './DocumentationNode';
 import * as vscode from 'vscode';
-import { ILinkNode } from './ILinkNode';
+import { IssuesNode, TweetNode, SamplesNode, DocumentationNode, ILinkNode } from '../index'
 
 const nodes = [
     new IssuesNode(),

@@ -2,12 +2,12 @@
  *  Copyright (c) Dolittle. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as vscode from 'vscode';
 import {initializer} from '@dolittle/tooling.common';
 import {ICanOutputMessages, IBusyIndicator, NullBusyIndicator} from '@dolittle/tooling.common.utilities';
-import { Outputter } from './Outputter';
-import { BusyIndicator } from './BusyIndicator';
-import { commandManager, ICommandManager } from '@dolittle/tooling.common.commands';
+import { commandManager } from '@dolittle/tooling.common.commands';
+import { dependencyResolvers, dependencyDiscoverResolver } from '@dolittle/tooling.common.dependencies';
+import { dolittleConfig } from '@dolittle/tooling.common.configurations';
+import { Outputter, ICommands, BusyIndicator, PromptDependencyResolver, Commands } from './index';
 
 /**
  * Initializes and holds 'global' objects 
@@ -17,13 +17,14 @@ import { commandManager, ICommandManager } from '@dolittle/tooling.common.comman
 class Globals {
     private _outputter: ICanOutputMessages;
     private _busyIndicator: IBusyIndicator;
+    private _commandsSystem!: ICommands;
     /**
      * Instantiates an instance of {Globals}.
      */
     constructor() {
         this._outputter = new Outputter();
         this._busyIndicator = new BusyIndicator();
-
+        dependencyResolvers.add(new PromptDependencyResolver(dependencyDiscoverResolver, dolittleConfig, this.outputter))
     }
     /**
      * Gets the global instance of {ICanOutputMessages}
@@ -39,14 +40,9 @@ class Globals {
      */
     get busyIndicator() { return this._busyIndicator; }
     
-    /**
-     * Gets the command manager and initializes the tooling system if not initialized
-     *
-     * @returns {ICommandManager} The command manager
-     */
-    async getCommandsManager() {
+    async getCommandsSystem() { 
         if (!initializer.isInitialized) await this.initialize();
-        return commandManager;
+        return this._commandsSystem;
     }
 
     /**
@@ -54,7 +50,10 @@ class Globals {
      *
      */
     async initialize() {
-        if (!initializer.isInitialized) await initializer.initialize(new NullBusyIndicator());
+        if (!initializer.isInitialized) {
+            await initializer.initialize(new NullBusyIndicator());
+            this._commandsSystem = new Commands(commandManager, dependencyResolvers, this._outputter)
+        }
     }
 }
 

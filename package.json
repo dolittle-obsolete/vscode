@@ -79,9 +79,9 @@
         },
         "commands": [
             {
-                "command": "dolittle.update",
-                "category": "Dolittle",
-                "title": "Update"
+                "command": "dolittle.tooling.commands",
+                "category": "Dolittle Tooling",
+                "title": "Commands"
             },
             {
                 "command": "dolittle.usefulLinksView.issues",

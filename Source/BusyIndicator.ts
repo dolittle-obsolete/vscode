@@ -9,10 +9,6 @@ export class BusyIndicator implements IBusyIndicator {
     text: string = 'something';
     isBusy: boolean = false;
 
-
-
-    
-
     createNew(text?: string | undefined): IBusyIndicator {
         throw new Error('Method not implemented');
     }
