@@ -20,7 +20,7 @@ export class Commands implements ICommands {
         this._commandManager.namespaces.forEach(namespace => {
             commands.push(...namespace.commands);
             namespace.commandGroups.forEach(_ => commands.push(..._.commands));
-        })
+        });
         return commands;
     } 
     async executeCommand(editor: vscode.TextEditor) {
@@ -43,6 +43,7 @@ export class Commands implements ICommands {
         let res = await vscode.window.showQuickPick(choices, {canPickMany: false, ignoreFocusOut: true});
         return this.promptForCommand(res);
     }
+
     private async promptForCommand(commandListItem: CommandListItem | undefined, allArguments: string[] = []): Promise<{command: ICommand | undefined, allArguments: string[]}> {
         if (commandListItem === undefined) return {command: undefined, allArguments};
         allArguments.push(commandListItem.label);
